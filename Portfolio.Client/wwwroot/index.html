@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Shakil Hassan | Game Systems Engineer</title>
+    <base href="/" />
+    
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="css/app.css" />
+</head>
+<body class="font-['DM_Sans'] text-[#e8e8f0] antialiased">
+    
+    <div id="app">
+        <div class="min-h-screen flex items-center justify-center bg-[#0a0a0f]">
+            <div class="text-[#00ff88] font-['Space_Mono'] animate-pulse">BOOTING_SYSTEM...</div>
+        </div>
+    </div>
+
+    <script src="_framework/blazor.webassembly.js"></script>
+
+    <script>
+        document.addEventListener('mousemove', (e) => {
+            const cursor = document.getElementById('cursor');
+            const cursorRing = document.getElementById('cursorRing');
+            if(cursor && cursorRing) {
+                cursor.style.left = e.clientX + 'px';
+                cursor.style.top = e.clientY + 'px';
+                
+                // Slight delay effect for the ring
+                setTimeout(() => {
+                    cursorRing.style.left = e.clientX + 'px';
+                    cursorRing.style.top = e.clientY + 'px';
+                }, 50);
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,33 @@
+﻿@page "/"
+@inject Portfolio.Client.Services.PortfolioService PortfolioData
+@using Portfolio.Client.Models
+
+<section class="relative min-h-[80vh] flex flex-col justify-center px-6 md:px-24 overflow-hidden">
+    <div class="relative z-10 max-w-4xl">
+        <h1 class="font-['Bebas_Neue'] text-7xl md:text-[120px] leading-[0.9] mb-8 tracking-wider">
+            BUILDING <span class="text-transparent" style="-webkit-text-stroke: 1.5px #00ff88">GAMES</span><br />
+            & EFFICIENT SYSTEMS
+        </h1>
+        <p class="font-light text-[#6b6b8a] text-lg max-w-2xl leading-relaxed mb-10">
+            3+ years bridging technical complexity and creative vision. Specializing in systems architecture and tooling across Unity and Godot.
+        </p>
+    </div>
+</section>
+
+<section class="px-6 md:px-24 pb-24">
+    <div class="flex items-center gap-3 mb-12">
+        <div class="h-[1px] w-12 bg-[#00ff88]"></div>
+        <span class="font-['Space_Mono'] text-[#00ff88] text-xs tracking-[0.3em] uppercase">Shipped Systems</span>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        @foreach (var project in PortfolioData.GetProjects())
+        {
+            <div class="bg-[#13131f] border border-white/5 p-8 hover:border-[#00ff88]/30 hover:bg-[#00ff88]/5 transition-all group">
+                <div class="font-['Space_Mono'] text-[10px] text-[#00ff88] uppercase tracking-widest mb-4">@project.Engine // @project.Category</div>
+                <h3 class="text-2xl font-['Bebas_Neue'] tracking-wide mb-4 text-white">@project.Title</h3>
+                <p class="text-[#6b6b8a] text-sm leading-relaxed font-light">@project.Description</p>
+            </div>
+        }
+    </div>
+</section>
