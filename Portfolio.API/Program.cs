@@ -1,41 +1,46 @@
+using Microsoft.AspNetCore.Mvc;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+// 1. Configure CORS to allow the Client (Port 5227) to talk to this API
+builder.Services.AddCors(options => {
+    options.AddDefaultPolicy(policy => 
+        policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+});
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-}
-
+app.UseCors();
 app.UseHttpsRedirection();
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+// 2. IMPORTANT: This allows the browser to view the uploaded images
+app.UseStaticFiles(); 
 
-app.MapGet("/weatherforecast", () =>
+// --- API ENDPOINTS ---
+
+app.MapPost("/api/upload", async (IFormFile file, IWebHostEnvironment env) =>
 {
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast");
+    if (file == null || file.Length == 0) return Results.BadRequest("No file.");
+
+    var webRoot = env.WebRootPath ?? Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+    var folderPath = Path.Combine(webRoot, "uploads");
+    if (!Directory.Exists(folderPath)) Directory.CreateDirectory(folderPath);
+
+    var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+    var fullPath = Path.Combine(folderPath, fileName);
+
+    using var stream = new FileStream(fullPath, FileMode.Create);
+    await file.CopyToAsync(stream);
+
+    return Results.Ok(new { Url = $"/uploads/{fileName}" });
+}).DisableAntiforgery();
+
+app.MapDelete("/api/upload", (string filePath, IWebHostEnvironment env) =>
+{
+    var webRoot = env.WebRootPath ?? Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+    var physicalPath = Path.Combine(webRoot, filePath.TrimStart('/'));
+    if (File.Exists(physicalPath)) File.Delete(physicalPath);
+    return Results.Ok();
+});
 
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
