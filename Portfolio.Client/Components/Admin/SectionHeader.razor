@@ -1,0 +1,12 @@
+@namespace Portfolio.Client.Components.Admin
+
+@* Portfolio.Client/Components/Admin/SectionHeader.razor *@
+<div class="mb-2">
+    <h2 class="font-['Bebas_Neue'] text-5xl tracking-wide">@Title</h2>
+    <p class="font-['Space_Mono'] text-[10px] text-[#6b6b8a] uppercase tracking-widest mt-1">@Sub</p>
+</div>
+
+@code {
+    [Parameter] public string Title { get; set; } = "";
+    [Parameter] public string Sub   { get; set; } = "";
+}

@@ -4,182 +4,505 @@
 @inject PortfolioService PortfolioData
 @inject IFileUploadService FileUploadService
 
-<section class="px-6 md:px-24 py-12">
-    <div class="flex items-center gap-3 mb-8">
-        <div class="h-[1px] w-8 bg-[#00ff88]"></div>
-        <span class="font-['Space_Mono'] text-[#00ff88] text-[10px] tracking-[0.3em] uppercase">Security Level: Root</span>
+<div class="flex min-h-screen">
+
+    <!-- ═══════════ SIDEBAR ═══════════ -->
+    <aside class="hidden lg:flex flex-col w-56 flex-shrink-0 fixed top-20 bottom-0 left-0
+                  bg-[#0a0a0f] border-r border-white/5 overflow-y-auto z-40">
+        <div class="p-6 border-b border-white/5">
+            <div class="font-['Space_Mono'] text-[9px] text-[#6b6b8a] uppercase tracking-[0.3em]">Admin Panel</div>
+        </div>
+        <nav class="flex flex-col p-4 gap-1">
+            @foreach (var s in _sections)
+            {
+                var isActive = _activeSection == s.Key;
+                var btnClass = isActive
+                    ? "text-[#00ff88] border-[#00ff88] bg-[#00ff88]/[0.05]"
+                    : "text-[#6b6b8a] border-transparent hover:text-white hover:border-white/20";
+                <button @onclick="() => _activeSection = s.Key"
+                        class="text-left px-4 py-3 font-['Space_Mono'] text-[10px] uppercase tracking-widest
+                               transition-all border-l-2 @btnClass">
+                    @s.Value
+                </button>
+            }
+        </nav>
+    </aside>
+
+    <!-- Mobile picker -->
+    <div class="lg:hidden px-6 pt-6 w-full">
+        <select @bind="_activeSection"
+                class="w-full bg-[#13131f] border border-white/10 text-[#e8e8f0]
+                       font-['Space_Mono'] text-xs uppercase tracking-widest px-4 py-3">
+            @foreach (var s in _sections)
+            {
+                <option value="@s.Key">@s.Value</option>
+            }
+        </select>
     </div>
 
-    <h2 class="font-['Bebas_Neue'] text-6xl mb-12 tracking-wide">
-        SYSTEM <span class="text-transparent" style="-webkit-text-stroke: 1px #00ff88">ADMINISTRATION</span>
-    </h2>
+    <!-- ═══════════ MAIN ═══════════ -->
+    <main class="flex-1 lg:ml-56 px-6 md:px-12 py-12">
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-16">
-
-        <!-- ── FORM ── -->
-        <div class="lg:col-span-1">
-            <div class="sticky top-24 bg-[#13131f] border border-white/5 p-10 shadow-2xl">
-                <h3 class="font-['Space_Mono'] text-[#00ff88] text-xs tracking-[0.2em] uppercase mb-10 border-b border-white/5 pb-6">
-                    @(isEditing ? "Modify Record" : "Initialize Entry")
-                </h3>
-
-                <EditForm Model="newProject" OnValidSubmit="HandleSubmit" class="flex flex-col gap-6">
-
-                    <!-- Title -->
-                    <div class="form-group">
-                        <label class="admin-label">Entry Name</label>
-                        <InputText @bind-Value="newProject.Title" class="admin-input" placeholder="Project Name" />
-                    </div>
-
-                    <!-- Engine + Category -->
-                    <div class="grid grid-cols-2 gap-4">
-                        <div class="form-group">
-                            <label class="admin-label">Engine</label>
-                            <InputText @bind-Value="newProject.Engine" class="admin-input" placeholder="Unity" />
-                        </div>
-                        <div class="form-group">
-                            <label class="admin-label">Category</label>
-                            <InputText @bind-Value="newProject.Category" class="admin-input" placeholder="Tooling" />
-                        </div>
-                    </div>
-
-                    <!-- Image upload -->
-                    <div class="form-group">
-                        <label class="admin-label">Visual Data</label>
-                        <div class="relative border border-white/10 p-6 bg-[#0a0a0f] hover:border-[#00ff88]/30 transition-colors">
-                            <InputFile OnChange="HandleFileSelected" class="absolute inset-0 opacity-0 cursor-pointer z-10" accept=".png,.jpg,.jpeg" />
-                            <div class="flex flex-col items-center gap-2">
-                                <span class="text-[10px] text-[#6b6b8a] uppercase tracking-widest text-center">
-                                    @(isUploading ? "Uploading..." : string.IsNullOrEmpty(newProject.ImageUrl) ? "Drop Image Here" : "Image Captured ✓")
-                                </span>
-                                @if (isUploading) { <div class="w-12 h-[1px] bg-[#00ff88] animate-pulse"></div> }
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Description -->
-                    <div class="form-group">
-                        <label class="admin-label">Overview</label>
-                        <InputTextArea @bind-Value="newProject.Description" rows="4" class="admin-input" placeholder="Describe the project..." />
-                    </div>
-
-                    <!-- Tech Stack -->
-                    <div class="form-group">
-                        <label class="admin-label">Tech Stack <span class="text-[#6b6b8a] normal-case">(comma separated)</span></label>
-                        <InputText @bind-Value="newProject.TechStack" class="admin-input" placeholder="C#, Unity, DOTween" />
-                    </div>
-
-                    <!-- Features -->
-                    <div class="form-group">
-                        <label class="admin-label">Key Features <span class="text-[#6b6b8a] normal-case">(one per line)</span></label>
-                        <textarea class="admin-input" rows="4"
-                                  placeholder="Dynamic level generation&#10;Real-time analytics&#10;Custom editor tools"
-                                  @bind="_featuresText"></textarea>
-                    </div>
-
-                    <!-- Design Patterns -->
-                    <div class="form-group">
-                        <label class="admin-label">Design Patterns <span class="text-[#6b6b8a] normal-case">(one per line)</span></label>
-                        <textarea class="admin-input" rows="3"
-                                  placeholder="Observer&#10;Command&#10;Object Pool"
-                                  @bind="_patternsText"></textarea>
-                    </div>
-
-                    <!-- GitHub URL -->
-                    <div class="form-group">
-                        <label class="admin-label">GitHub URL</label>
-                        <InputText @bind-Value="newProject.GithubUrl" class="admin-input" placeholder="https://github.com/..." />
-                    </div>
-
-                    <!-- Game / Demo URL -->
-                    <div class="form-group">
-                        <label class="admin-label">Demo / Game URL</label>
-                        <InputText @bind-Value="newProject.GameUrl" class="admin-input" placeholder="https://..." />
-                    </div>
-
-                    <!-- Submit / Cancel -->
-                    <div class="flex flex-col gap-3 pt-4">
-                        <button type="submit"
-                                class="bg-[#00ff88] text-[#0a0a0f] font-['Space_Mono'] font-bold text-xs uppercase tracking-[0.2em] py-5 hover:bg-[#00cc6d] transition-all">
-                            @(isEditing ? "Overwrite Protocol" : "Execute Entry")
-                        </button>
-                        @if (isEditing)
-                        {
-                            <button type="button" @onclick="CancelEdit"
-                                    class="text-[#6b6b8a] font-['Space_Mono'] text-[10px] uppercase tracking-widest hover:text-white py-2">
-                                Cancel
-                            </button>
-                        }
-                    </div>
-                </EditForm>
+        @if (_saving)
+        {
+            <div class="fixed top-24 right-6 z-50 font-['Space_Mono'] text-[10px] text-[#00ff88]
+                        bg-[#13131f] border border-[#00ff88]/30 px-4 py-2 tracking-widest uppercase animate-pulse">
+                Saving...
             </div>
-        </div>
+        }
+        @if (_saved)
+        {
+            <div class="fixed top-24 right-6 z-50 font-['Space_Mono'] text-[10px] text-[#00ff88]
+                        bg-[#13131f] border border-[#00ff88]/30 px-4 py-2 tracking-widest uppercase">
+                ✓ Saved
+            </div>
+        }
 
-        <!-- ── RECORDS LIST ── -->
-        <div class="lg:col-span-2">
-            <h3 class="font-['Space_Mono'] text-[#00ff88] text-xs tracking-[0.2em] uppercase mb-10 border-b border-white/5 pb-6">
-                Active Database Records
-            </h3>
-            @foreach (var p in PortfolioData.GetProjects())
-            {
-                <div class="record-card group mb-4">
-                    <div class="flex items-center gap-6">
-                        <div class="relative w-24 h-16 overflow-hidden bg-[#0a0a0f] border border-white/10 flex-shrink-0">
-                            <img src="@p.ImageUrl" class="w-full h-full object-cover"
-                                 onerror="this.src='https://placehold.co/100x60/13131f/6b6b8a?text=NA'" />
-                        </div>
-                        <div>
-                            <h4 class="font-['Bebas_Neue'] text-2xl tracking-wide">@p.Title</h4>
-                            <span class="font-['Space_Mono'] text-[10px] text-[#6b6b8a] uppercase">@p.Engine // @p.Category</span>
-                            @if (!string.IsNullOrEmpty(p.TechStack))
-                            {
-                                <div class="flex flex-wrap gap-1 mt-1">
-                                    @foreach (var t in p.TechStack.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).Take(3))
-                                    {
-                                        <span class="font-['Space_Mono'] text-[9px] px-2 py-0.5 bg-[#00ff88]/5 border border-[#00ff88]/10 text-[#00ff88]">@t</span>
-                                    }
+        <!-- ── PROJECTS ── -->
+        @if (_activeSection == "projects")
+        {
+            <!-- Section Header -->
+            <div class="mb-8">
+                <h2 class="font-['Bebas_Neue'] text-5xl tracking-wide">Projects</h2>
+                <p class="font-['Space_Mono'] text-[10px] text-[#6b6b8a] uppercase tracking-widest mt-1">Manage portfolio project cards</p>
+            </div>
+
+            <div class="grid grid-cols-1 xl:grid-cols-3 gap-12">
+                <!-- Form -->
+                <div class="xl:col-span-1">
+                    <div class="bg-[#13131f] border border-white/5 p-8">
+                        <div class="admin-section-label mb-8">@(isEditing ? "Edit Project" : "Add Project")</div>
+                        <EditForm Model="newProject" OnValidSubmit="HandleProjectSubmit" class="flex flex-col gap-5">
+
+                            <div class="flex flex-col">
+                                <label class="admin-label">Title</label>
+                                <InputText @bind-Value="newProject.Title" class="admin-input" placeholder="Project Name" />
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="flex flex-col">
+                                    <label class="admin-label">Engine</label>
+                                    <InputText @bind-Value="newProject.Engine" class="admin-input" placeholder="Unity" />
                                 </div>
-                            }
-                        </div>
-                    </div>
-                    <div class="flex gap-8">
-                        <a href="/project/@p.Id" target="_blank"
-                           class="font-['Space_Mono'] text-[10px] text-[#6b6b8a] uppercase hover:text-[#00ff88] transition-colors">
-                            Preview
-                        </a>
-                        <button @onclick="() => StartEdit(p)" class="action-btn-edit">Modify [E]</button>
-                        <button @onclick="() => DeleteEntry(p)" class="action-btn-delete">Terminate [X]</button>
+                                <div class="flex flex-col">
+                                    <label class="admin-label">Category</label>
+                                    <InputText @bind-Value="newProject.Category" class="admin-input" placeholder="Tooling" />
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="admin-label">Image</label>
+                                <div class="relative border border-white/10 p-5 bg-[#0a0a0f] hover:border-[#00ff88]/30 transition-colors">
+                                    <InputFile OnChange="HandleFileSelected" class="absolute inset-0 opacity-0 cursor-pointer z-10" accept=".png,.jpg,.jpeg" />
+                                    <span class="text-[10px] text-[#6b6b8a] uppercase tracking-widest block text-center">
+                                        @(isUploading ? "Uploading..." : string.IsNullOrEmpty(newProject.ImageUrl) ? "Drop Image" : "✓ Image Set")
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="flex flex-col">
+                                <label class="admin-label">Description</label>
+                                <InputTextArea @bind-Value="newProject.Description" rows="3" class="admin-input" />
+                            </div>
+                            <div class="flex flex-col">
+                                <label class="admin-label">Tech Stack (comma sep)</label>
+                                <InputText @bind-Value="newProject.TechStack" class="admin-input" placeholder="C#, Unity" />
+                            </div>
+                            <div class="flex flex-col">
+                                <label class="admin-label">Features (one per line)</label>
+                                <textarea class="admin-input" rows="3" @bind="_featuresText"></textarea>
+                            </div>
+                            <div class="flex flex-col">
+                                <label class="admin-label">Design Patterns (one per line)</label>
+                                <textarea class="admin-input" rows="3" @bind="_patternsText"></textarea>
+                            </div>
+                            <div class="flex flex-col">
+                                <label class="admin-label">GitHub URL</label>
+                                <InputText @bind-Value="newProject.GithubUrl" class="admin-input" placeholder="https://github.com/..." />
+                            </div>
+                            <div class="flex flex-col">
+                                <label class="admin-label">Demo URL</label>
+                                <InputText @bind-Value="newProject.GameUrl" class="admin-input" placeholder="https://..." />
+                            </div>
+
+                            <div class="flex gap-3 pt-2">
+                                <button type="submit" class="btn-admin-green flex-1">@(isEditing ? "Update" : "Add")</button>
+                                @if (isEditing)
+                                {
+                                    <button type="button" @onclick="CancelProjectEdit" class="btn-admin-ghost">Cancel</button>
+                                }
+                            </div>
+                        </EditForm>
                     </div>
                 </div>
-            }
-        </div>
-    </div>
-</section>
+
+                <!-- Records list -->
+                <div class="xl:col-span-2 flex flex-col gap-3">
+                    @foreach (var p in PortfolioData.GetProjects())
+                    {
+                        <div class="record-card">
+                            <div class="flex items-center gap-4">
+                                <img src="@p.ImageUrl" class="w-20 h-14 object-cover bg-[#0a0a0f] border border-white/10 flex-shrink-0"
+                                     onerror="this.src='https://placehold.co/80x56/13131f/6b6b8a?text=NA'" />
+                                <div>
+                                    <div class="font-['Bebas_Neue'] text-xl">@p.Title</div>
+                                    <div class="font-['Space_Mono'] text-[10px] text-[#6b6b8a]">@p.Engine // @p.Category</div>
+                                </div>
+                            </div>
+                            <div class="flex gap-6 flex-shrink-0">
+                                <a href="/project/@p.Id" target="_blank" class="action-link">View</a>
+                                <button @onclick="() => StartProjectEdit(p)" class="action-link green">Edit</button>
+                                <button @onclick="() => DeleteProject(p)" class="action-link red">Delete</button>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+
+        <!-- ── HERO ── -->
+        @if (_activeSection == "hero")
+        {
+            <div class="mb-8">
+                <h2 class="font-['Bebas_Neue'] text-5xl tracking-wide">Hero Section</h2>
+                <p class="font-['Space_Mono'] text-[10px] text-[#6b6b8a] uppercase tracking-widest mt-1">Edit the main landing banner</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="bg-[#13131f] border border-white/5 p-8 flex flex-col gap-5">
+                    <div class="flex flex-col"><label class="admin-label">Status Badge</label><InputText @bind-Value="_c.HeroStatus" class="admin-input" /></div>
+                    <div class="flex flex-col"><label class="admin-label">Eyebrow Text</label><InputText @bind-Value="_c.HeroEyebrow" class="admin-input" /></div>
+                    <div class="flex flex-col"><label class="admin-label">Headline Line 1</label><InputText @bind-Value="_c.HeroHeadline1" class="admin-input" /></div>
+                    <div class="flex flex-col"><label class="admin-label">Headline Line 2 (outline)</label><InputText @bind-Value="_c.HeroHeadline2" class="admin-input" /></div>
+                    <div class="flex flex-col"><label class="admin-label">Headline Line 3</label><InputText @bind-Value="_c.HeroHeadline3" class="admin-input" /></div>
+                    <div class="flex flex-col"><label class="admin-label">Subtitle</label><InputText @bind-Value="_c.HeroSubtitle" class="admin-input" /></div>
+                    <div class="flex flex-col"><label class="admin-label">Description</label><InputTextArea @bind-Value="_c.HeroDescription" rows="3" class="admin-input" /></div>
+                    <div class="flex flex-col"><label class="admin-label">CTA Primary</label><InputText @bind-Value="_c.HeroCtaPrimary" class="admin-input" /></div>
+                    <div class="flex flex-col"><label class="admin-label">CTA Secondary</label><InputText @bind-Value="_c.HeroCtaSecondary" class="admin-input" /></div>
+                </div>
+                <div class="bg-[#13131f] border border-white/5 p-8 flex flex-col gap-5">
+                    <div class="admin-section-label">Stats</div>
+                    @for (int i = 0; i < _c.HeroStats.Count; i++)
+                    {
+                        var idx = i;
+                        <div class="flex gap-3 items-end">
+                            <div class="flex flex-col flex-1">
+                                <label class="admin-label">Value</label>
+                                <InputText @bind-Value="_c.HeroStats[idx].Value" class="admin-input" />
+                            </div>
+                            <div class="flex flex-col flex-1">
+                                <label class="admin-label">Label</label>
+                                <InputText @bind-Value="_c.HeroStats[idx].Label" class="admin-input" />
+                            </div>
+                            <button @onclick="() => _c.HeroStats.RemoveAt(idx)" class="btn-admin-red px-3 py-2 self-end mb-0.5">✕</button>
+                        </div>
+                    }
+                    <button @onclick="() => _c.HeroStats.Add(new StatItem())" class="btn-admin-ghost text-xs">+ Add Stat</button>
+                </div>
+            </div>
+
+            <!-- Save Bar -->
+            <div class="mt-10 pt-6 border-t border-white/5 flex items-center gap-4">
+                <button @onclick="SaveContent" class="btn-admin-green">Save Changes</button>
+                <span class="font-['Space_Mono'] text-[10px] text-[#6b6b8a] uppercase tracking-widest">Saved to server JSON</span>
+            </div>
+        }
+
+        <!-- ── MARQUEE ── -->
+        @if (_activeSection == "marquee")
+        {
+            <div class="mb-8">
+                <h2 class="font-['Bebas_Neue'] text-5xl tracking-wide">Marquee Ticker</h2>
+                <p class="font-['Space_Mono'] text-[10px] text-[#6b6b8a] uppercase tracking-widest mt-1">Edit the scrolling tech tags</p>
+            </div>
+
+            <div class="bg-[#13131f] border border-white/5 p-8 max-w-2xl">
+                <div class="admin-section-label mb-6">Items</div>
+                @for (int i = 0; i < _c.MarqueeItems.Count; i++)
+                {
+                    var idx = i;
+                    <div class="flex gap-3 mb-3">
+                        <input class="admin-input flex-1" @bind="_c.MarqueeItems[idx]" />
+                        <button @onclick="() => _c.MarqueeItems.RemoveAt(idx)" class="btn-admin-red px-3">✕</button>
+                    </div>
+                }
+                <button @onclick="() => _c.MarqueeItems.Add(string.Empty)" class="btn-admin-ghost text-xs mt-2">+ Add Item</button>
+            </div>
+
+            <div class="mt-10 pt-6 border-t border-white/5 flex items-center gap-4">
+                <button @onclick="SaveContent" class="btn-admin-green">Save Changes</button>
+                <span class="font-['Space_Mono'] text-[10px] text-[#6b6b8a] uppercase tracking-widest">Saved to server JSON</span>
+            </div>
+        }
+
+        <!-- ── ABOUT ── -->
+        @if (_activeSection == "about")
+        {
+            <div class="mb-8">
+                <h2 class="font-['Bebas_Neue'] text-5xl tracking-wide">About Section</h2>
+                <p class="font-['Space_Mono'] text-[10px] text-[#6b6b8a] uppercase tracking-widest mt-1">Edit bio, tags and expertise bars</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="bg-[#13131f] border border-white/5 p-8 flex flex-col gap-5">
+                    <div class="flex flex-col"><label class="admin-label">Headline</label><InputText @bind-Value="_c.AboutHeadline" class="admin-input" /></div>
+                    <div class="flex flex-col"><label class="admin-label">Subheadline (outline)</label><InputText @bind-Value="_c.AboutSubheadline" class="admin-input" /></div>
+
+                    <div class="admin-section-label mt-2">Paragraphs</div>
+                    @for (int i = 0; i < _c.AboutParagraphs.Count; i++)
+                    {
+                        var idx = i;
+                        <div class="flex gap-3">
+                            <textarea class="admin-input flex-1" rows="3" @bind="_c.AboutParagraphs[idx]"></textarea>
+                            <button @onclick="() => _c.AboutParagraphs.RemoveAt(idx)" class="btn-admin-red px-3 self-start mt-1">✕</button>
+                        </div>
+                    }
+                    <button @onclick="() => _c.AboutParagraphs.Add(string.Empty)" class="btn-admin-ghost text-xs">+ Add Paragraph</button>
+
+                    <div class="admin-section-label mt-2">Tech Tags</div>
+                    <div class="flex flex-wrap gap-2">
+                        @for (int i = 0; i < _c.AboutTags.Count; i++)
+                        {
+                            var idx = i;
+                            <div class="flex gap-1 items-center">
+                                <input class="admin-input w-24 text-xs py-2 px-2" @bind="_c.AboutTags[idx]" />
+                                <button @onclick="() => _c.AboutTags.RemoveAt(idx)" class="text-[#ff3c6e] text-xs px-1">✕</button>
+                            </div>
+                        }
+                        <button @onclick="() => _c.AboutTags.Add(string.Empty)" class="btn-admin-ghost text-xs px-3 py-2">+</button>
+                    </div>
+                </div>
+
+                <div class="bg-[#13131f] border border-white/5 p-8 flex flex-col gap-5">
+                    <div class="admin-section-label">Expertise Bars</div>
+                    @for (int i = 0; i < _c.ExpertiseBars.Count; i++)
+                    {
+                        var idx = i;
+                        <div class="flex gap-3 items-end">
+                            <div class="flex flex-col flex-1">
+                                <label class="admin-label">Skill</label>
+                                <InputText @bind-Value="_c.ExpertiseBars[idx].Name" class="admin-input" />
+                            </div>
+                            <div class="flex flex-col w-20">
+                                <label class="admin-label">%</label>
+                                <input type="number" min="0" max="100" class="admin-input"
+                                       value="@_c.ExpertiseBars[idx].Pct"
+                                       @onchange="@(e => _c.ExpertiseBars[idx].Pct = int.TryParse(e.Value?.ToString(), out var v) ? v : 80)" />
+                            </div>
+                            <button @onclick="() => _c.ExpertiseBars.RemoveAt(idx)" class="btn-admin-red px-3 py-2 self-end mb-0.5">✕</button>
+                        </div>
+                    }
+                    <button @onclick="() => _c.ExpertiseBars.Add(new ExpertiseBar())" class="btn-admin-ghost text-xs">+ Add Bar</button>
+                </div>
+            </div>
+
+            <div class="mt-10 pt-6 border-t border-white/5 flex items-center gap-4">
+                <button @onclick="SaveContent" class="btn-admin-green">Save Changes</button>
+                <span class="font-['Space_Mono'] text-[10px] text-[#6b6b8a] uppercase tracking-widest">Saved to server JSON</span>
+            </div>
+        }
+
+        <!-- ── HIGHLIGHTS ── -->
+        @if (_activeSection == "highlights")
+        {
+            <div class="mb-8">
+                <h2 class="font-['Bebas_Neue'] text-5xl tracking-wide">Highlights Strip</h2>
+                <p class="font-['Space_Mono'] text-[10px] text-[#6b6b8a] uppercase tracking-widest mt-1">The stat cards below About</p>
+            </div>
+
+            <div class="bg-[#13131f] border border-white/5 p-8 max-w-3xl flex flex-col gap-5">
+                @for (int i = 0; i < _c.Highlights.Count; i++)
+                {
+                    var idx = i;
+                    <div class="flex gap-3 items-end">
+                        <div class="flex flex-col w-24">
+                            <label class="admin-label">Number</label>
+                            <InputText @bind-Value="_c.Highlights[idx].Number" class="admin-input" />
+                        </div>
+                        <div class="flex flex-col w-16">
+                            <label class="admin-label">Suffix</label>
+                            <InputText @bind-Value="_c.Highlights[idx].Suffix" class="admin-input" />
+                        </div>
+                        <div class="flex flex-col flex-1">
+                            <label class="admin-label">Label</label>
+                            <InputText @bind-Value="_c.Highlights[idx].Label" class="admin-input" />
+                        </div>
+                        <button @onclick="() => _c.Highlights.RemoveAt(idx)" class="btn-admin-red px-3 py-2 self-end mb-0.5">✕</button>
+                    </div>
+                }
+                <button @onclick="() => _c.Highlights.Add(new HighlightStat())" class="btn-admin-ghost text-xs">+ Add Highlight</button>
+            </div>
+
+            <div class="mt-10 pt-6 border-t border-white/5 flex items-center gap-4">
+                <button @onclick="SaveContent" class="btn-admin-green">Save Changes</button>
+                <span class="font-['Space_Mono'] text-[10px] text-[#6b6b8a] uppercase tracking-widest">Saved to server JSON</span>
+            </div>
+        }
+
+        <!-- ── EXPERIENCE ── -->
+        @if (_activeSection == "experience")
+        {
+            <div class="mb-8">
+                <h2 class="font-['Bebas_Neue'] text-5xl tracking-wide">Experience Timeline</h2>
+                <p class="font-['Space_Mono'] text-[10px] text-[#6b6b8a] uppercase tracking-widest mt-1">Work history and key deliverables</p>
+            </div>
+
+            <div class="grid grid-cols-1 xl:grid-cols-2 gap-12">
+                <!-- Jobs -->
+                <div class="flex flex-col gap-4">
+                    <div class="admin-section-label">Timeline Jobs</div>
+                    @for (int i = 0; i < _c.Jobs.Count; i++)
+                    {
+                        var idx = i;
+                        var job = _c.Jobs[idx];
+                        <div class="bg-[#13131f] border border-white/5 p-6 flex flex-col gap-4">
+                            <div class="grid grid-cols-2 gap-3">
+                                <div class="flex flex-col">
+                                    <label class="admin-label">Date</label>
+                                    <InputText @bind-Value="job.Date" class="admin-input" />
+                                </div>
+                                <div class="flex flex-col">
+                                    <label class="admin-label">Company</label>
+                                    <InputText @bind-Value="job.Company" class="admin-input" />
+                                </div>
+                            </div>
+                            <div class="flex flex-col">
+                                <label class="admin-label">Role</label>
+                                <InputText @bind-Value="job.Role" class="admin-input" />
+                            </div>
+                            <div class="flex flex-col">
+                                <label class="admin-label">Description</label>
+                                <InputTextArea @bind-Value="job.Desc" rows="2" class="admin-input" />
+                            </div>
+                            <div class="flex flex-col">
+                                <label class="admin-label">Tags (comma sep)</label>
+                                <input class="admin-input" value="@string.Join(", ", job.Tags)"
+                                       @onchange="@(e => job.Tags = (e.Value ?? string.Empty).ToString()!
+                                           .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+                                           .ToList())" />
+                            </div>
+                            <button @onclick="() => _c.Jobs.RemoveAt(idx)" class="btn-admin-red text-xs self-end">Remove Job</button>
+                        </div>
+                    }
+                    <button @onclick="() => _c.Jobs.Add(new JobItem())" class="btn-admin-ghost text-xs">+ Add Job</button>
+                </div>
+
+                <!-- Deliverables -->
+                <div class="flex flex-col gap-4">
+                    <div class="admin-section-label">Key Deliverables</div>
+                    @for (int i = 0; i < _c.Deliverables.Count; i++)
+                    {
+                        var idx = i;
+                        var d = _c.Deliverables[idx];
+                        <div class="bg-[#13131f] border border-white/5 p-6 flex flex-col gap-4">
+                            <div class="flex flex-col">
+                                <label class="admin-label">Label (e.g. 01 — Editor)</label>
+                                <InputText @bind-Value="d.Label" class="admin-input" />
+                            </div>
+                            <div class="flex flex-col">
+                                <label class="admin-label">Title</label>
+                                <InputText @bind-Value="d.Title" class="admin-input" />
+                            </div>
+                            <div class="flex flex-col">
+                                <label class="admin-label">Description</label>
+                                <InputTextArea @bind-Value="d.Desc" rows="2" class="admin-input" />
+                            </div>
+                            <button @onclick="() => _c.Deliverables.RemoveAt(idx)" class="btn-admin-red text-xs self-end">Remove</button>
+                        </div>
+                    }
+                    <button @onclick="() => _c.Deliverables.Add(new DeliverableItem())" class="btn-admin-ghost text-xs">+ Add Deliverable</button>
+                </div>
+            </div>
+
+            <div class="mt-10 pt-6 border-t border-white/5 flex items-center gap-4">
+                <button @onclick="SaveContent" class="btn-admin-green">Save Changes</button>
+                <span class="font-['Space_Mono'] text-[10px] text-[#6b6b8a] uppercase tracking-widest">Saved to server JSON</span>
+            </div>
+        }
+
+        <!-- ── CONTACT ── -->
+        @if (_activeSection == "contact")
+        {
+            <div class="mb-8">
+                <h2 class="font-['Bebas_Neue'] text-5xl tracking-wide">Contact Section</h2>
+                <p class="font-['Space_Mono'] text-[10px] text-[#6b6b8a] uppercase tracking-widest mt-1">Edit contact details and links</p>
+            </div>
+
+            <div class="bg-[#13131f] border border-white/5 p-8 max-w-xl flex flex-col gap-5">
+                <div class="flex flex-col"><label class="admin-label">Headline</label><InputText @bind-Value="_c.ContactTitle" class="admin-input" /></div>
+                <div class="flex flex-col"><label class="admin-label">Subtext</label><InputTextArea @bind-Value="_c.ContactSub" rows="2" class="admin-input" /></div>
+                <div class="flex flex-col"><label class="admin-label">Email</label><InputText @bind-Value="_c.ContactEmail" class="admin-input" /></div>
+                <div class="flex flex-col"><label class="admin-label">LinkedIn URL</label><InputText @bind-Value="_c.ContactLinkedIn" class="admin-input" /></div>
+                <div class="flex flex-col"><label class="admin-label">GitHub URL</label><InputText @bind-Value="_c.ContactGithub" class="admin-input" /></div>
+                <div class="flex flex-col"><label class="admin-label">Resume PDF URL</label><InputText @bind-Value="_c.ContactResume" class="admin-input" /></div>
+            </div>
+
+            <div class="mt-10 pt-6 border-t border-white/5 flex items-center gap-4">
+                <button @onclick="SaveContent" class="btn-admin-green">Save Changes</button>
+                <span class="font-['Space_Mono'] text-[10px] text-[#6b6b8a] uppercase tracking-widest">Saved to server JSON</span>
+            </div>
+        }
+
+    </main>
+</div>
 
 <style>
-    .admin-label { display: block; font-family: 'Space Mono', monospace; font-size: 10px; color: #6b6b8a; text-transform: uppercase; letter-spacing: 0.2em; margin-bottom: 8px; }
-    .admin-input { width: 100%; background-color: #0a0a0f; border: 1px solid rgba(255,255,255,0.05); padding: 16px; font-size: 13px; color: #e8e8f0; outline: none; transition: all 0.3s; resize: vertical; font-family: 'DM Sans', sans-serif; }
-    .admin-input:focus { border-color: #00ff88; background-color: rgba(0,255,136,0.02); }
-    .record-card { background-color: #13131f; border: 1px solid rgba(255,255,255,0.05); padding: 24px 32px; display: flex; justify-content: space-between; align-items: center; transition: all 0.3s; gap: 16px; }
-    .record-card:hover { border-color: rgba(0,255,136,0.2); }
-    .action-btn-edit { font-family: 'Space Mono', monospace; font-size: 10px; color: #6b6b8a; text-transform: uppercase; transition: 0.2s; background: none; border: none; cursor: pointer; }
-    .action-btn-edit:hover { color: #00ff88; }
-    .action-btn-delete { font-family: 'Space Mono', monospace; font-size: 10px; color: #6b6b8a; text-transform: uppercase; transition: 0.2s; background: none; border: none; cursor: pointer; }
-    .action-btn-delete:hover { color: #ff3c6e; }
+    .admin-label         { display:block; font-family:'Space Mono',monospace; font-size:10px; color:#6b6b8a; text-transform:uppercase; letter-spacing:.2em; margin-bottom:6px; }
+    .admin-section-label { font-family:'Space Mono',monospace; font-size:10px; color:#00ff88; text-transform:uppercase; letter-spacing:.2em; }
+    .admin-input         { width:100%; background:#0a0a0f; border:1px solid rgba(255,255,255,.05); padding:12px 14px; font-size:13px; color:#e8e8f0; outline:none; transition:all .2s; resize:vertical; font-family:'DM Sans',sans-serif; }
+    .admin-input:focus   { border-color:#00ff88; background:rgba(0,255,136,.02); }
+    .btn-admin-green     { background:#00ff88; color:#0a0a0f; font-family:'Space Mono',monospace; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.15em; padding:12px 20px; border:none; cursor:pointer; transition:all .2s; }
+    .btn-admin-green:hover { background:#00cc6d; }
+    .btn-admin-ghost     { background:transparent; border:1px solid rgba(255,255,255,.1); color:#6b6b8a; font-family:'Space Mono',monospace; font-size:11px; text-transform:uppercase; letter-spacing:.15em; padding:12px 20px; cursor:pointer; transition:all .2s; }
+    .btn-admin-ghost:hover { border-color:#00ff88; color:#00ff88; }
+    .btn-admin-red       { background:transparent; border:1px solid rgba(255,60,110,.2); color:#ff3c6e; font-family:'Space Mono',monospace; font-size:10px; text-transform:uppercase; padding:8px 12px; cursor:pointer; transition:all .2s; }
+    .btn-admin-red:hover { background:rgba(255,60,110,.1); }
+    .record-card         { background:#13131f; border:1px solid rgba(255,255,255,.05); padding:20px 24px; display:flex; justify-content:space-between; align-items:center; gap:12px; transition:all .2s; }
+    .record-card:hover   { border-color:rgba(0,255,136,.2); }
+    .action-link         { font-family:'Space Mono',monospace; font-size:10px; text-transform:uppercase; color:#6b6b8a; background:none; border:none; cursor:pointer; transition:.2s; text-decoration:none; }
+    .action-link:hover   { color:white; }
+    .action-link.green:hover { color:#00ff88; }
+    .action-link.red:hover   { color:#ff3c6e; }
 </style>
 
 @code {
-    private Project newProject = new();
-    private bool isEditing = false, isUploading = false;
-    private string originalImageUrl = string.Empty;
+    private string      _activeSection  = "projects";
+    private SiteContent _c              = new();
+    private bool        _saving         = false;
+    private bool        _saved          = false;
 
-    // Text area bindings for list fields
-    private string _featuresText = string.Empty;
-    private string _patternsText = string.Empty;
+    private static readonly Dictionary<string, string> _sections = new()
+    {
+        ["projects"]   = "01  Projects",
+        ["hero"]       = "02  Hero",
+        ["marquee"]    = "03  Marquee",
+        ["about"]      = "04  About",
+        ["highlights"] = "05  Highlights",
+        ["experience"] = "06  Experience",
+        ["contact"]    = "07  Contact",
+    };
+
+    private Project newProject       = new();
+    private bool    isEditing        = false;
+    private bool    isUploading      = false;
+    private string  originalImageUrl = string.Empty;
+    private string  _featuresText    = string.Empty;
+    private string  _patternsText    = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
         await PortfolioData.EnsureLoadedAsync();
+        var json = System.Text.Json.JsonSerializer.Serialize(PortfolioData.GetContent());
+        _c = System.Text.Json.JsonSerializer.Deserialize<SiteContent>(json) ?? new();
+    }
+
+    private async Task SaveContent()
+    {
+        _saving = true; _saved = false;
+        await PortfolioData.SaveContentAsync(_c);
+        _saving = false; _saved = true;
+        await Task.Delay(2000);
+        _saved = false;
     }
 
     private async Task HandleFileSelected(InputFileChangeEventArgs e)
@@ -195,70 +518,46 @@
         isUploading = false;
     }
 
-    private async Task HandleSubmit()
+    private async Task HandleProjectSubmit()
     {
-        // Parse list fields from textarea
         newProject.Features = _featuresText
-            .Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
-            .ToList();
-
+            .Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).ToList();
         newProject.DesignPatterns = _patternsText
-            .Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
-            .ToList();
-
+            .Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).ToList();
         if (isEditing)
         {
             if (!string.IsNullOrEmpty(originalImageUrl) && newProject.ImageUrl != originalImageUrl)
                 await FileUploadService.DeleteFileAsync(originalImageUrl);
             PortfolioData.DeleteProject(newProject.Id);
         }
-
         PortfolioData.AddProject(newProject);
-        ResetForm();
+        ResetProjectForm();
     }
 
-    private void StartEdit(Project p)
+    private void StartProjectEdit(Project p)
     {
-        newProject = new Project
-        {
-            Id             = p.Id,
-            Title          = p.Title,
-            Engine         = p.Engine,
-            Description    = p.Description,
-            Category       = p.Category,
-            ImageUrl       = p.ImageUrl,
-            TechStack      = p.TechStack,
-            GithubUrl      = p.GithubUrl,
-            GameUrl        = p.GameUrl,
-            Features       = new List<string>(p.Features),
-            DesignPatterns = new List<string>(p.DesignPatterns),
-        };
+        newProject = new Project {
+            Id=p.Id, Title=p.Title, Engine=p.Engine, Description=p.Description,
+            Category=p.Category, ImageUrl=p.ImageUrl, TechStack=p.TechStack,
+            GithubUrl=p.GithubUrl, GameUrl=p.GameUrl,
+            Features=new(p.Features), DesignPatterns=new(p.DesignPatterns) };
         originalImageUrl = p.ImageUrl;
         _featuresText    = string.Join("\n", p.Features);
         _patternsText    = string.Join("\n", p.DesignPatterns);
         isEditing = true;
     }
 
-    private void CancelEdit()
-    {
-        if (isEditing && !string.IsNullOrEmpty(newProject.ImageUrl) && newProject.ImageUrl != originalImageUrl)
-            _ = FileUploadService.DeleteFileAsync(newProject.ImageUrl);
-        ResetForm();
-    }
+    private void CancelProjectEdit() => ResetProjectForm();
 
-    private async Task DeleteEntry(Project p)
+    private async Task DeleteProject(Project p)
     {
-        if (!string.IsNullOrEmpty(p.ImageUrl))
-            await FileUploadService.DeleteFileAsync(p.ImageUrl);
+        if (!string.IsNullOrEmpty(p.ImageUrl)) await FileUploadService.DeleteFileAsync(p.ImageUrl);
         PortfolioData.DeleteProject(p.Id);
     }
 
-    private void ResetForm()
+    private void ResetProjectForm()
     {
-        newProject       = new();
-        originalImageUrl = string.Empty;
-        _featuresText    = string.Empty;
-        _patternsText    = string.Empty;
-        isEditing        = false;
+        newProject = new(); originalImageUrl = string.Empty;
+        _featuresText = string.Empty; _patternsText = string.Empty; isEditing = false;
     }
 }

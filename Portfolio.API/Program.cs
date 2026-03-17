@@ -8,99 +8,90 @@ builder.Services.AddCors(options => {
 });
 
 var app = builder.Build();
-
 app.UseCors();
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
-// ── PERSISTENCE HELPERS ─────────────────────────────────────────────────────
-
-static string GetProjectsFilePath(IWebHostEnvironment env) =>
-    Path.Combine(env.ContentRootPath, "projects.json");
-
-static async Task<List<ProjectData>> ReadProjectsAsync(string path)
-{
-    if (!File.Exists(path)) return new List<ProjectData>();
-    var json = await File.ReadAllTextAsync(path);
-    return JsonSerializer.Deserialize<List<ProjectData>>(json,
-        new JsonSerializerOptions { PropertyNameCaseInsensitive = true })
-        ?? new List<ProjectData>();
-}
-
-static async Task WriteProjectsAsync(string path, List<ProjectData> projects)
-{
-    var json = JsonSerializer.Serialize(projects, new JsonSerializerOptions { WriteIndented = true });
-    await File.WriteAllTextAsync(path, json);
-}
-
-// ── PROJECT ENDPOINTS ───────────────────────────────────────────────────────
+// ── PROJECTS ─────────────────────────────────────────────────────────────────
 
 app.MapGet("/api/projects", async (IWebHostEnvironment env) =>
 {
-    var path = GetProjectsFilePath(env);
-    var projects = await ReadProjectsAsync(path);
-
-    if (projects.Count == 0)
+    var opts = GetJsonOpts();
+    var path = GetProjectsPath(env);
+    if (!File.Exists(path))
     {
-        projects.Add(new ProjectData
-        {
-            Id          = Guid.NewGuid().ToString(),
-            Title       = "Dynamic Level Editor",
-            Engine      = "Unity",
-            Category    = "Tooling",
-            Description = "Custom editor tooling enabling non-dev designers to build and iterate levels.",
-            ImageUrl    = string.Empty
-        });
-        await WriteProjectsAsync(path, projects);
+        var seed = new List<ProjectData> { new() {
+            Id = Guid.NewGuid().ToString(), Title = "Dynamic Level Editor",
+            Engine = "Unity", Category = "Tooling",
+            Description = "Custom editor tooling enabling non-dev designers to build and iterate levels." }};
+        await File.WriteAllTextAsync(path, JsonSerializer.Serialize(seed, opts));
+        return Results.Ok(seed);
     }
-
-    return Results.Ok(projects);
+    var json = await File.ReadAllTextAsync(path);
+    return Results.Ok(JsonSerializer.Deserialize<List<ProjectData>>(json, opts) ?? new());
 });
 
 app.MapPost("/api/projects", async (List<ProjectData> projects, IWebHostEnvironment env) =>
 {
-    var path = GetProjectsFilePath(env);
-    await WriteProjectsAsync(path, projects);
+    await File.WriteAllTextAsync(GetProjectsPath(env), JsonSerializer.Serialize(projects, GetJsonOpts()));
     return Results.Ok();
 });
 
-// ── FILE UPLOAD ENDPOINTS ───────────────────────────────────────────────────
+// ── SITE CONTENT ─────────────────────────────────────────────────────────────
+
+app.MapGet("/api/content", async (IWebHostEnvironment env) =>
+{
+    var opts = GetJsonOpts();
+    var path = GetContentPath(env);
+    if (!File.Exists(path)) return Results.Ok(new SiteContentData());
+    var json = await File.ReadAllTextAsync(path);
+    return Results.Ok(JsonSerializer.Deserialize<SiteContentData>(json, opts) ?? new());
+});
+
+app.MapPost("/api/content", async (SiteContentData content, IWebHostEnvironment env) =>
+{
+    await File.WriteAllTextAsync(GetContentPath(env), JsonSerializer.Serialize(content, GetJsonOpts()));
+    return Results.Ok();
+});
+
+// ── FILE UPLOAD ───────────────────────────────────────────────────────────────
 
 app.MapPost("/api/upload", async (IFormFile file, IWebHostEnvironment env) =>
 {
     if (file == null || file.Length == 0) return Results.BadRequest("No file.");
-
-    var webRoot = env.WebRootPath ?? Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
-    var folderPath = Path.Combine(webRoot, "uploads");
-    if (!Directory.Exists(folderPath)) Directory.CreateDirectory(folderPath);
-
-    var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
-    var fullPath = Path.Combine(folderPath, fileName);
-
-    using var stream = new FileStream(fullPath, FileMode.Create);
+    var webRoot  = env.WebRootPath ?? Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+    var folder   = Path.Combine(webRoot, "uploads");
+    if (!Directory.Exists(folder)) Directory.CreateDirectory(folder);
+    var fileName = Guid.NewGuid() + Path.GetExtension(file.FileName);
+    await using var stream = new FileStream(Path.Combine(folder, fileName), FileMode.Create);
     await file.CopyToAsync(stream);
-
     return Results.Ok(new { Url = $"/uploads/{fileName}" });
 }).DisableAntiforgery();
 
 app.MapDelete("/api/upload", (string filePath, IWebHostEnvironment env) =>
 {
-    var webRoot = env.WebRootPath ?? Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
-    var physicalPath = Path.Combine(webRoot, filePath.TrimStart('/'));
-
-    if (File.Exists(physicalPath))
-    {
-        File.Delete(physicalPath);
-        return Results.Ok();
-    }
-    return Results.NotFound("File not found on disk.");
+    var physical = Path.Combine(
+        env.WebRootPath ?? Path.Combine(Directory.GetCurrentDirectory(), "wwwroot"),
+        filePath.TrimStart('/'));
+    if (File.Exists(physical)) { File.Delete(physical); return Results.Ok(); }
+    return Results.NotFound();
 });
 
 app.Run();
 
-// ── LOCAL DTO — mirrors Portfolio.Client.Models.Project ────────────────────
-// The API doesn't reference the Client project, so we define the shape here.
-// Property names must match exactly (case-insensitive JSON handles the rest).
+// ── HELPERS (regular static methods — not top-level fields) ──────────────────
+
+static string GetProjectsPath(IWebHostEnvironment env) =>
+    Path.Combine(env.ContentRootPath, "projects.json");
+
+static string GetContentPath(IWebHostEnvironment env) =>
+    Path.Combine(env.ContentRootPath, "site-content.json");
+
+static JsonSerializerOptions GetJsonOpts() =>
+    new() { PropertyNameCaseInsensitive = true, WriteIndented = true };
+
+// ── DTOs ─────────────────────────────────────────────────────────────────────
+
 public class ProjectData
 {
     public string Id          { get; set; } = Guid.NewGuid().ToString();
@@ -115,3 +106,62 @@ public class ProjectData
     public List<string> DesignPatterns { get; set; } = new();
     public List<string> Features       { get; set; } = new();
 }
+
+public class SiteContentData
+{
+    public string HeroStatus       { get; set; } = "Available for Remote Work";
+    public string HeroEyebrow      { get; set; } = "Game Developer & Tools Engineer";
+    public string HeroHeadline1    { get; set; } = "BUILDING";
+    public string HeroHeadline2    { get; set; } = "GAMES";
+    public string HeroHeadline3    { get; set; } = "& SYSTEMS";
+    public string HeroSubtitle     { get; set; } = "Unity · Godot · C# · C++";
+    public string HeroDescription  { get; set; } = "Specializing in Tools Engineering and modular systems architecture.";
+    public string HeroCtaPrimary   { get; set; } = "Initialize Contact";
+    public string HeroCtaSecondary { get; set; } = "View Experience →";
+    public List<StatItemData>        HeroStats      { get; set; } = new() {
+        new() { Value="3+", Label="Years Exp" }, new() { Value="20+", Label="Tech Interviews" }, new() { Value="2", Label="Engines" } };
+    public List<string>              MarqueeItems   { get; set; } = new() {
+        "Unity 3D","Godot Engine","C Sharp","GDScript","Level Editor","DOTween","Firebase","Play Store ASO","Git & SourceTree","LevelPlay SDK" };
+    public string AboutHeadline    { get; set; } = "THE BUILDER";
+    public string AboutSubheadline { get; set; } = "BEHIND THE BUILD";
+    public List<string>              AboutParagraphs { get; set; } = new() {
+        "My biggest strength is Tooling. I've developed custom Dynamic Level Editors that allow designers to iterate without dev intervention.",
+        "I'm deeply familiar with the full game lifecycle: from physics prototypes to Play Store publishing and ASO optimization." };
+    public List<string>              AboutTags      { get; set; } = new() { "Unity","Godot","C#","C++","GDScript","Editor Scripting" };
+    public List<ExpertiseBarData>    ExpertiseBars  { get; set; } = new() {
+        new(){Name="Tooling & Editor Scripting",Pct=96}, new(){Name="Unity / C#",Pct=94},
+        new(){Name="Godot / GDScript",Pct=88}, new(){Name="Systems Architecture",Pct=90},
+        new(){Name="Analytics & SDK Integration",Pct=82}, new(){Name="Git / Version Control",Pct=92} };
+    public List<HighlightStatData>   Highlights     { get; set; } = new() {
+        new(){Number="3",Suffix="+",Label="Years of Game Dev Experience"},
+        new(){Number="20",Suffix="+",Label="Technical Interviews Conducted"},
+        new(){Number="100",Suffix="%",Label="Remote-Ready Workflow"},
+        new(){Number="∞",Suffix="",Label="Passion for Process Optimization"} };
+    public List<JobItemData>         Jobs           { get; set; } = new() {
+        new(){Date="2022 — Present",Company="Game Studio",Role="Senior Game Developer",
+              Desc="Built custom Dynamic Level Editors enabling designers to iterate independently.",
+              Tags=new(){"Unity","C#","Editor Scripting","DOTween"}},
+        new(){Date="2021 — 2022",Company="Indie / Contract",Role="Game Developer",
+              Desc="Developed full-cycle mobile games from physics prototyping through Play Store publishing.",
+              Tags=new(){"Godot","GDScript","Firebase","ASO"}},
+        new(){Date="2021",Company="Early Career",Role="Junior Developer",
+              Desc="Established foundations in game systems architecture and version control.",
+              Tags=new(){"C++","Git","SourceTree"}} };
+    public List<DeliverableItemData> Deliverables   { get; set; } = new() {
+        new(){Label="01 — Level Editor",Title="Dynamic Level Editor System",Desc="Custom Unity tooling enabling non-dev designers to build and publish levels."},
+        new(){Label="02 — Analytics",Title="Data Pipeline Integration",Desc="Full integration of LevelPlay, Firebase, and ByteBrew."},
+        new(){Label="03 — Publishing",Title="Play Store Publishing & ASO",Desc="End-to-end game deployment with App Store Optimization."} };
+    public string ContactTitle    { get; set; } = "LET'S BUILD TOGETHER";
+    public string ContactSub      { get; set; } = "Currently seeking remote opportunities where I can optimize production pipelines.";
+    public string ContactEmail    { get; set; } = "hello@example.com";
+    public string ContactLinkedIn { get; set; } = "https://linkedin.com";
+    public string ContactGithub   { get; set; } = "https://github.com";
+    public string ContactResume   { get; set; } = "#";
+}
+
+public class StatItemData        { public string Value  { get; set; } = ""; public string Label  { get; set; } = ""; }
+public class ExpertiseBarData    { public string Name   { get; set; } = ""; public int    Pct    { get; set; } = 80; }
+public class HighlightStatData   { public string Number { get; set; } = ""; public string Suffix { get; set; } = ""; public string Label { get; set; } = ""; }
+public class JobItemData         { public string Date   { get; set; } = ""; public string Company{ get; set; } = ""; public string Role  { get; set; } = "";
+                                   public string Desc   { get; set; } = ""; public List<string> Tags { get; set; } = new(); }
+public class DeliverableItemData { public string Label  { get; set; } = ""; public string Title  { get; set; } = ""; public string Desc  { get; set; } = ""; }

@@ -1,0 +1,18 @@
+@namespace Portfolio.Client.Components.Admin
+
+@* Portfolio.Client/Components/Admin/Field.razor *@
+<div class="field-wrap @Class">
+    <label class="admin-label">@Label</label>
+    @ChildContent
+</div>
+
+<style>
+    .field-wrap  { display: flex; flex-direction: column; }
+    .admin-label { display: block; font-family: 'Space Mono', monospace; font-size: 10px; color: #6b6b8a; text-transform: uppercase; letter-spacing: .2em; margin-bottom: 6px; }
+</style>
+
+@code {
+    [Parameter] public string           Label        { get; set; } = "";
+    [Parameter] public string?          Class        { get; set; }
+    [Parameter] public RenderFragment?  ChildContent { get; set; }
+}

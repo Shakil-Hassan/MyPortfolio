@@ -3,92 +3,73 @@ using System.Net.Http.Json;
 
 namespace Portfolio.Client.Services;
 
-/// <summary>
-/// PortfolioService — Client-side singleton.
-/// Loads from the API on first use, writes back on every mutation.
-/// Data survives page refreshes because it is stored as JSON on the server.
-/// </summary>
 public class PortfolioService
 {
     private readonly HttpClient _http;
-    private List<Project> _projects = new();
-    private bool _loaded = false;
 
-    public PortfolioService(HttpClient http)
-    {
-        _http = http;
-    }
+    private List<Project>  _projects = new();
+    private SiteContent    _content  = new();
+    private bool _projectsLoaded = false;
+    private bool _contentLoaded  = false;
 
-    // ── READ ────────────────────────────────────────────────────
-    /// Call this once from any page that needs data (await it).
+    public PortfolioService(HttpClient http) => _http = http;
+
+    // ── Load both on startup ────────────────────────────────────
     public async Task EnsureLoadedAsync()
     {
-        if (_loaded) return;
+        await EnsureProjectsLoadedAsync();
+        await EnsureContentLoadedAsync();
+    }
+
+    // ── PROJECTS ────────────────────────────────────────────────
+    private async Task EnsureProjectsLoadedAsync()
+    {
+        if (_projectsLoaded) return;
         try
         {
-            using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5)); // 5s timeout
+            using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
             var loaded = await _http.GetFromJsonAsync<List<Project>>("/api/projects", cts.Token);
             if (loaded != null) _projects = loaded;
         }
         catch
         {
-            // API unreachable or timed out — fall back to defaults
-            SeedDefaults();
+            _projects.Add(new Project { Title = "Dynamic Level Editor", Engine = "Unity",
+                Category = "Tooling", Description = "Custom editor tooling enabling non-dev designers to build and iterate levels." });
         }
-        _loaded = true;
+        _projectsLoaded = true;
     }
 
-    /// Synchronous accessor — safe AFTER EnsureLoadedAsync() has been awaited.
     public IReadOnlyList<Project> GetProjects() => _projects.AsReadOnly();
 
-    // ── WRITE ───────────────────────────────────────────────────
-    public async Task AddProjectAsync(Project project)
+    public void AddProject(Project p)    { _projects.Add(p); _ = SaveProjectsAsync(); }
+    public void DeleteProject(string id) { _projects.RemoveAll(p => p.Id == id); _ = SaveProjectsAsync(); }
+
+    private async Task SaveProjectsAsync()
     {
-        _projects.Add(project);
-        await SaveAsync();
+        try { await _http.PostAsJsonAsync("/api/projects", _projects); }
+        catch (Exception ex) { Console.WriteLine($"Projects save failed: {ex.Message}"); }
     }
 
-    public async Task DeleteProjectAsync(string id)
+    // ── SITE CONTENT ────────────────────────────────────────────
+    private async Task EnsureContentLoadedAsync()
     {
-        _projects.RemoveAll(p => p.Id == id);
-        await SaveAsync();
-    }
-
-    // Keep the old sync methods so Admin.razor compiles without changes.
-    // They fire-and-forget the save — fine for this use-case.
-    public void AddProject(Project project)
-    {
-        _projects.Add(project);
-        _ = SaveAsync();
-    }
-
-    public void DeleteProject(string id)
-    {
-        _projects.RemoveAll(p => p.Id == id);
-        _ = SaveAsync();
-    }
-
-    // ── PRIVATE ─────────────────────────────────────────────────
-    private async Task SaveAsync()
-    {
+        if (_contentLoaded) return;
         try
         {
-            await _http.PostAsJsonAsync("/api/projects", _projects);
+            using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+            var loaded = await _http.GetFromJsonAsync<SiteContent>("/api/content", cts.Token);
+            if (loaded != null) _content = loaded;
         }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"PortfolioService: save failed — {ex.Message}");
-        }
+        catch { /* keep defaults */ }
+        _contentLoaded = true;
     }
 
-    private void SeedDefaults()
+    public SiteContent GetContent() => _content;
+
+    public async Task SaveContentAsync(SiteContent content)
     {
-        _projects.Add(new Project
-        {
-            Title       = "Dynamic Level Editor",
-            Engine      = "Unity",
-            Category    = "Tooling",
-            Description = "Custom editor tooling enabling non-dev designers to build and iterate levels."
-        });
+        _content = content;
+        try { await _http.PostAsJsonAsync("/api/content", content); }
+        catch (Exception ex) { Console.WriteLine($"Content save failed: {ex.Message}"); }
     }
 }

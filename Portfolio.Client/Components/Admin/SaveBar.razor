@@ -1,0 +1,17 @@
+@namespace Portfolio.Client.Components.Admin
+
+@* Portfolio.Client/Components/Admin/SaveBar.razor *@
+<div class="mt-10 pt-6 border-t border-white/5 flex items-center gap-4">
+    <button @onclick="OnSave"
+            class="bg-[#00ff88] text-[#0a0a0f] font-['Space_Mono'] font-bold text-xs uppercase
+                   tracking-[0.2em] px-10 py-4 hover:bg-[#00cc6d] transition-all">
+        Save Changes
+    </button>
+    <span class="font-['Space_Mono'] text-[10px] text-[#6b6b8a] uppercase tracking-widest">
+        Saved to server JSON
+    </span>
+</div>
+
+@code {
+    [Parameter] public EventCallback OnSave { get; set; }
+}
