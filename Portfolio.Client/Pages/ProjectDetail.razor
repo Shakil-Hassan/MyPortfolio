@@ -1,0 +1,258 @@
+@page "/project/{Id}"
+@inject Portfolio.Client.Services.PortfolioService PortfolioData
+@using Portfolio.Client.Models
+@inject NavigationManager Nav
+@inject IJSRuntime JS
+
+@if (_loading)
+{
+    <div class="min-h-screen flex items-center justify-center">
+        <div class="font-['Space_Mono'] text-[#00ff88] text-xs tracking-widest animate-pulse">
+            LOADING_RECORD...
+        </div>
+    </div>
+}
+else if (_project == null)
+{
+    <div class="min-h-screen flex flex-col items-center justify-center gap-6">
+        <div class="font-['Bebas_Neue'] text-8xl text-[#6b6b8a]">404</div>
+        <div class="font-['Space_Mono'] text-[#6b6b8a] text-xs tracking-widest uppercase">Record Not Found</div>
+        <a href="/"
+           class="font-['Space_Mono'] text-xs border border-white/10 px-8 py-4 uppercase tracking-widest
+                  hover:border-[#00ff88] hover:text-[#00ff88] transition-all">
+            ← Return to Base
+        </a>
+    </div>
+}
+else
+{
+    <!-- HERO BANNER -->
+    <section class="relative min-h-[60vh] flex flex-col justify-end px-6 md:px-24 pb-16 pt-32 overflow-hidden">
+
+        <!-- Background image with overlay -->
+        <div class="absolute inset-0 z-0">
+            @if (!string.IsNullOrEmpty(_project.ImageUrl))
+            {
+                <img src="@_project.ImageUrl"
+                     class="w-full h-full object-cover opacity-20"
+                     onerror="this.style.display='none'" />
+            }
+            <div class="absolute inset-0 bg-gradient-to-t from-[#0a0a0f] via-[#0a0a0f]/80 to-[#0a0a0f]/40"></div>
+            <!-- Subtle grid -->
+            <div class="hero-grid opacity-50"></div>
+        </div>
+
+        <div class="relative z-10">
+            <!-- Breadcrumb -->
+            <div class="flex items-center gap-3 mb-6 font-['Space_Mono'] text-[10px] tracking-widest uppercase">
+                <a href="/#projects" class="text-[#6b6b8a] hover:text-[#00ff88] transition-colors">Portfolio</a>
+                <span class="text-[#6b6b8a]">/</span>
+                <span class="text-[#00ff88]">@_project.Title</span>
+            </div>
+
+            <!-- Category tag -->
+            <div class="inline-flex items-center gap-2 mb-4 font-['Space_Mono'] text-[10px] tracking-widest uppercase
+                        text-[#00ff88] bg-[#00ff88]/[0.07] border border-[#00ff88]/20 px-3 py-1.5">
+                @_project.Engine // @_project.Category
+            </div>
+
+            <!-- Title -->
+            <h1 class="font-['Bebas_Neue'] leading-none tracking-wide mb-4"
+                style="font-size:clamp(48px,8vw,120px)">
+                @_project.Title
+            </h1>
+
+            <!-- Action buttons -->
+            <div class="flex flex-wrap gap-4 mt-6">
+                @if (!string.IsNullOrEmpty(_project.GameUrl))
+                {
+                    <a href="@_project.GameUrl" target="_blank"
+                       class="btn-primary relative overflow-hidden bg-[#00ff88] text-[#0a0a0f]
+                              font-['Space_Mono'] font-bold text-xs uppercase px-8 py-4
+                              hover:shadow-[0_0_40px_rgba(0,255,136,0.3)] hover:-translate-y-0.5 transition-all">
+                        ▶ Play / Demo
+                    </a>
+                }
+                @if (!string.IsNullOrEmpty(_project.GithubUrl))
+                {
+                    <a href="@_project.GithubUrl" target="_blank"
+                       class="font-['Space_Mono'] text-xs border border-white/20 px-8 py-4 uppercase tracking-widest
+                              hover:border-[#00ff88] hover:text-[#00ff88] transition-all">
+                        ⌥ Source Code
+                    </a>
+                }
+                <a href="/#projects"
+                   class="font-['Space_Mono'] text-xs border border-white/10 px-8 py-4 uppercase tracking-widest
+                          text-[#6b6b8a] hover:border-white/30 hover:text-white transition-all">
+                    ← Back
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- MAIN CONTENT -->
+    <section class="px-6 md:px-24 py-20">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-16">
+
+            <!-- Left: Main info -->
+            <div class="lg:col-span-2 flex flex-col gap-16">
+
+                <!-- Screenshot -->
+                @if (!string.IsNullOrEmpty(_project.ImageUrl))
+                {
+                    <div class="reveal overflow-hidden border border-white/5 bg-[#13131f]">
+                        <img src="@_project.ImageUrl"
+                             class="w-full object-cover"
+                             onerror="this.src='https://placehold.co/1200x675/13131f/6b6b8a?text=NO+IMAGE'" />
+                    </div>
+                }
+
+                <!-- Overview -->
+                <div class="reveal">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="h-px w-6 bg-[#00ff88]"></div>
+                        <span class="font-['Space_Mono'] text-[#00ff88] text-[10px] tracking-[0.3em] uppercase">Overview</span>
+                    </div>
+                    <p class="text-[#6b6b8a] leading-[1.9] text-lg font-light">@_project.Description</p>
+                </div>
+
+                <!-- Features -->
+                @if (_project.Features.Any())
+                {
+                    <div class="reveal">
+                        <div class="flex items-center gap-3 mb-8">
+                            <div class="h-px w-6 bg-[#00ff88]"></div>
+                            <span class="font-['Space_Mono'] text-[#00ff88] text-[10px] tracking-[0.3em] uppercase">Key Features</span>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            @foreach (var feature in _project.Features)
+                            {
+                                <div class="flex items-start gap-3 bg-[#13131f] border border-white/5 p-5
+                                            hover:border-[#00ff88]/20 transition-all">
+                                    <span class="text-[#00ff88] font-['Space_Mono'] text-xs mt-0.5 flex-shrink-0">▸</span>
+                                    <span class="text-[#6b6b8a] text-sm font-light leading-relaxed">@feature</span>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+
+                <!-- Design Patterns -->
+                @if (_project.DesignPatterns.Any())
+                {
+                    <div class="reveal">
+                        <div class="flex items-center gap-3 mb-8">
+                            <div class="h-px w-6 bg-[#00ff88]"></div>
+                            <span class="font-['Space_Mono'] text-[#00ff88] text-[10px] tracking-[0.3em] uppercase">Architecture & Patterns</span>
+                        </div>
+                        <div class="flex flex-wrap gap-3">
+                            @foreach (var pattern in _project.DesignPatterns)
+                            {
+                                <div class="bg-[#13131f] border border-[#7c3aed]/20 px-5 py-3
+                                            hover:border-[#7c3aed]/50 transition-all">
+                                    <span class="font-['Space_Mono'] text-[11px] tracking-widest uppercase text-[#7c3aed]">@pattern</span>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <!-- Right: Sidebar -->
+            <div class="flex flex-col gap-6">
+
+                <!-- Tech Stack -->
+                @if (!string.IsNullOrEmpty(_project.TechStack))
+                {
+                    <div class="reveal bg-[#13131f] border border-white/5 p-8">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="h-px w-4 bg-[#00ff88]"></div>
+                            <span class="font-['Space_Mono'] text-[#00ff88] text-[9px] tracking-[0.3em] uppercase">Tech Stack</span>
+                        </div>
+                        <div class="flex flex-wrap gap-2">
+                            @foreach (var tech in _project.TechStack.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+                            {
+                                <span class="font-['Space_Mono'] text-[10px] tracking-widest uppercase px-3 py-1.5
+                                             bg-[#00ff88]/[0.05] border border-[#00ff88]/15 text-[#00ff88]">@tech</span>
+                            }
+                        </div>
+                    </div>
+                }
+
+                <!-- Project Meta -->
+                <div class="reveal bg-[#13131f] border border-white/5 p-8">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="h-px w-4 bg-[#00ff88]"></div>
+                        <span class="font-['Space_Mono'] text-[#00ff88] text-[9px] tracking-[0.3em] uppercase">Project Info</span>
+                    </div>
+                    <div class="flex flex-col gap-5">
+                        <div>
+                            <div class="font-['Space_Mono'] text-[9px] text-[#6b6b8a] uppercase tracking-widest mb-1">Engine</div>
+                            <div class="font-['Space_Mono'] text-sm text-[#e8e8f0]">@_project.Engine</div>
+                        </div>
+                        <div class="h-px bg-white/5"></div>
+                        <div>
+                            <div class="font-['Space_Mono'] text-[9px] text-[#6b6b8a] uppercase tracking-widest mb-1">Category</div>
+                            <div class="font-['Space_Mono'] text-sm text-[#e8e8f0]">@_project.Category</div>
+                        </div>
+                        @if (!string.IsNullOrEmpty(_project.GithubUrl))
+                        {
+                            <div class="h-px bg-white/5"></div>
+                            <div>
+                                <div class="font-['Space_Mono'] text-[9px] text-[#6b6b8a] uppercase tracking-widest mb-1">Repository</div>
+                                <a href="@_project.GithubUrl" target="_blank"
+                                   class="font-['Space_Mono'] text-xs text-[#00ff88] hover:underline break-all">
+                                    GitHub ↗
+                                </a>
+                            </div>
+                        }
+                        @if (!string.IsNullOrEmpty(_project.GameUrl))
+                        {
+                            <div class="h-px bg-white/5"></div>
+                            <div>
+                                <div class="font-['Space_Mono'] text-[9px] text-[#6b6b8a] uppercase tracking-widest mb-1">Live Demo</div>
+                                <a href="@_project.GameUrl" target="_blank"
+                                   class="font-['Space_Mono'] text-xs text-[#00ff88] hover:underline break-all">
+                                    Open ↗
+                                </a>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <!-- Back to portfolio -->
+                <div class="reveal bg-[#13131f] border border-white/5 p-8">
+                    <div class="font-['Space_Mono'] text-[9px] text-[#6b6b8a] uppercase tracking-widest mb-4">
+                        More Projects
+                    </div>
+                    <a href="/#projects"
+                       class="flex items-center gap-3 font-['Space_Mono'] text-xs uppercase tracking-widest
+                              text-[#6b6b8a] hover:text-[#00ff88] transition-colors group">
+                        <span class="group-hover:-translate-x-1 transition-transform">←</span>
+                        View All Records
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+}
+
+@code {
+    [Parameter] public string Id { get; set; } = string.Empty;
+
+    private Project? _project;
+    private bool _loading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await PortfolioData.EnsureLoadedAsync();
+        _project = PortfolioData.GetProjects().FirstOrDefault(p => p.Id == Id);
+        _loading = false;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+            await JS.InvokeVoidAsync("portfolioInit");
+    }
+}

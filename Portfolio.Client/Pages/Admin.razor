@@ -10,11 +10,13 @@
         <span class="font-['Space_Mono'] text-[#00ff88] text-[10px] tracking-[0.3em] uppercase">Security Level: Root</span>
     </div>
 
-    <h2 class="font-['Bebas_Neue'] text-6xl mb-12 tracking-wide">SYSTEM <span class="text-transparent" style="-webkit-text-stroke: 1px #00ff88">ADMINISTRATION</span></h2>
+    <h2 class="font-['Bebas_Neue'] text-6xl mb-12 tracking-wide">
+        SYSTEM <span class="text-transparent" style="-webkit-text-stroke: 1px #00ff88">ADMINISTRATION</span>
+    </h2>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-16">
 
-        <!-- Form -->
+        <!-- ── FORM ── -->
         <div class="lg:col-span-1">
             <div class="sticky top-24 bg-[#13131f] border border-white/5 p-10 shadow-2xl">
                 <h3 class="font-['Space_Mono'] text-[#00ff88] text-xs tracking-[0.2em] uppercase mb-10 border-b border-white/5 pb-6">
@@ -22,10 +24,14 @@
                 </h3>
 
                 <EditForm Model="newProject" OnValidSubmit="HandleSubmit" class="flex flex-col gap-6">
+
+                    <!-- Title -->
                     <div class="form-group">
                         <label class="admin-label">Entry Name</label>
                         <InputText @bind-Value="newProject.Title" class="admin-input" placeholder="Project Name" />
                     </div>
+
+                    <!-- Engine + Category -->
                     <div class="grid grid-cols-2 gap-4">
                         <div class="form-group">
                             <label class="admin-label">Engine</label>
@@ -36,29 +42,71 @@
                             <InputText @bind-Value="newProject.Category" class="admin-input" placeholder="Tooling" />
                         </div>
                     </div>
+
+                    <!-- Image upload -->
                     <div class="form-group">
                         <label class="admin-label">Visual Data</label>
                         <div class="relative border border-white/10 p-6 bg-[#0a0a0f] hover:border-[#00ff88]/30 transition-colors">
                             <InputFile OnChange="HandleFileSelected" class="absolute inset-0 opacity-0 cursor-pointer z-10" accept=".png,.jpg,.jpeg" />
                             <div class="flex flex-col items-center gap-2">
                                 <span class="text-[10px] text-[#6b6b8a] uppercase tracking-widest text-center">
-                                    @(isUploading ? "Uploading..." : string.IsNullOrEmpty(newProject.ImageUrl) ? "Drop Image Here" : "Image Captured")
+                                    @(isUploading ? "Uploading..." : string.IsNullOrEmpty(newProject.ImageUrl) ? "Drop Image Here" : "Image Captured ✓")
                                 </span>
                                 @if (isUploading) { <div class="w-12 h-[1px] bg-[#00ff88] animate-pulse"></div> }
                             </div>
                         </div>
                     </div>
+
+                    <!-- Description -->
                     <div class="form-group">
                         <label class="admin-label">Overview</label>
-                        <InputTextArea @bind-Value="newProject.Description" rows="4" class="admin-input" placeholder="System logs..." />
+                        <InputTextArea @bind-Value="newProject.Description" rows="4" class="admin-input" placeholder="Describe the project..." />
                     </div>
+
+                    <!-- Tech Stack -->
+                    <div class="form-group">
+                        <label class="admin-label">Tech Stack <span class="text-[#6b6b8a] normal-case">(comma separated)</span></label>
+                        <InputText @bind-Value="newProject.TechStack" class="admin-input" placeholder="C#, Unity, DOTween" />
+                    </div>
+
+                    <!-- Features -->
+                    <div class="form-group">
+                        <label class="admin-label">Key Features <span class="text-[#6b6b8a] normal-case">(one per line)</span></label>
+                        <textarea class="admin-input" rows="4"
+                                  placeholder="Dynamic level generation&#10;Real-time analytics&#10;Custom editor tools"
+                                  @bind="_featuresText"></textarea>
+                    </div>
+
+                    <!-- Design Patterns -->
+                    <div class="form-group">
+                        <label class="admin-label">Design Patterns <span class="text-[#6b6b8a] normal-case">(one per line)</span></label>
+                        <textarea class="admin-input" rows="3"
+                                  placeholder="Observer&#10;Command&#10;Object Pool"
+                                  @bind="_patternsText"></textarea>
+                    </div>
+
+                    <!-- GitHub URL -->
+                    <div class="form-group">
+                        <label class="admin-label">GitHub URL</label>
+                        <InputText @bind-Value="newProject.GithubUrl" class="admin-input" placeholder="https://github.com/..." />
+                    </div>
+
+                    <!-- Game / Demo URL -->
+                    <div class="form-group">
+                        <label class="admin-label">Demo / Game URL</label>
+                        <InputText @bind-Value="newProject.GameUrl" class="admin-input" placeholder="https://..." />
+                    </div>
+
+                    <!-- Submit / Cancel -->
                     <div class="flex flex-col gap-3 pt-4">
-                        <button type="submit" class="bg-[#00ff88] text-[#0a0a0f] font-['Space_Mono'] font-bold text-xs uppercase tracking-[0.2em] py-5 hover:bg-[#00cc6d] transition-all">
+                        <button type="submit"
+                                class="bg-[#00ff88] text-[#0a0a0f] font-['Space_Mono'] font-bold text-xs uppercase tracking-[0.2em] py-5 hover:bg-[#00cc6d] transition-all">
                             @(isEditing ? "Overwrite Protocol" : "Execute Entry")
                         </button>
                         @if (isEditing)
                         {
-                            <button type="button" @onclick="CancelEdit" class="text-[#6b6b8a] font-['Space_Mono'] text-[10px] uppercase tracking-widest hover:text-white py-2">
+                            <button type="button" @onclick="CancelEdit"
+                                    class="text-[#6b6b8a] font-['Space_Mono'] text-[10px] uppercase tracking-widest hover:text-white py-2">
                                 Cancel
                             </button>
                         }
@@ -67,23 +115,38 @@
             </div>
         </div>
 
-        <!-- Records list -->
+        <!-- ── RECORDS LIST ── -->
         <div class="lg:col-span-2">
-            <h3 class="font-['Space_Mono'] text-[#00ff88] text-xs tracking-[0.2em] uppercase mb-10 border-b border-white/5 pb-6">Active Database Records</h3>
+            <h3 class="font-['Space_Mono'] text-[#00ff88] text-xs tracking-[0.2em] uppercase mb-10 border-b border-white/5 pb-6">
+                Active Database Records
+            </h3>
             @foreach (var p in PortfolioData.GetProjects())
             {
                 <div class="record-card group mb-4">
                     <div class="flex items-center gap-6">
-                        <div class="relative w-24 h-16 overflow-hidden bg-[#0a0a0f] border border-white/10">
+                        <div class="relative w-24 h-16 overflow-hidden bg-[#0a0a0f] border border-white/10 flex-shrink-0">
                             <img src="@p.ImageUrl" class="w-full h-full object-cover"
                                  onerror="this.src='https://placehold.co/100x60/13131f/6b6b8a?text=NA'" />
                         </div>
                         <div>
                             <h4 class="font-['Bebas_Neue'] text-2xl tracking-wide">@p.Title</h4>
                             <span class="font-['Space_Mono'] text-[10px] text-[#6b6b8a] uppercase">@p.Engine // @p.Category</span>
+                            @if (!string.IsNullOrEmpty(p.TechStack))
+                            {
+                                <div class="flex flex-wrap gap-1 mt-1">
+                                    @foreach (var t in p.TechStack.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).Take(3))
+                                    {
+                                        <span class="font-['Space_Mono'] text-[9px] px-2 py-0.5 bg-[#00ff88]/5 border border-[#00ff88]/10 text-[#00ff88]">@t</span>
+                                    }
+                                </div>
+                            }
                         </div>
                     </div>
                     <div class="flex gap-8">
+                        <a href="/project/@p.Id" target="_blank"
+                           class="font-['Space_Mono'] text-[10px] text-[#6b6b8a] uppercase hover:text-[#00ff88] transition-colors">
+                            Preview
+                        </a>
                         <button @onclick="() => StartEdit(p)" class="action-btn-edit">Modify [E]</button>
                         <button @onclick="() => DeleteEntry(p)" class="action-btn-delete">Terminate [X]</button>
                     </div>
@@ -95,13 +158,13 @@
 
 <style>
     .admin-label { display: block; font-family: 'Space Mono', monospace; font-size: 10px; color: #6b6b8a; text-transform: uppercase; letter-spacing: 0.2em; margin-bottom: 8px; }
-    .admin-input { width: 100%; background-color: #0a0a0f; border: 1px solid rgba(255,255,255,0.05); padding: 16px; font-size: 13px; color: #e8e8f0; outline: none; transition: all 0.3s; }
+    .admin-input { width: 100%; background-color: #0a0a0f; border: 1px solid rgba(255,255,255,0.05); padding: 16px; font-size: 13px; color: #e8e8f0; outline: none; transition: all 0.3s; resize: vertical; font-family: 'DM Sans', sans-serif; }
     .admin-input:focus { border-color: #00ff88; background-color: rgba(0,255,136,0.02); }
-    .record-card { background-color: #13131f; border: 1px solid rgba(255,255,255,0.05); padding: 24px 32px; display: flex; justify-content: space-between; align-items: center; transition: all 0.3s; }
+    .record-card { background-color: #13131f; border: 1px solid rgba(255,255,255,0.05); padding: 24px 32px; display: flex; justify-content: space-between; align-items: center; transition: all 0.3s; gap: 16px; }
     .record-card:hover { border-color: rgba(0,255,136,0.2); }
-    .action-btn-edit { font-family: 'Space Mono', monospace; font-size: 10px; color: #6b6b8a; text-transform: uppercase; transition: 0.2s; }
+    .action-btn-edit { font-family: 'Space Mono', monospace; font-size: 10px; color: #6b6b8a; text-transform: uppercase; transition: 0.2s; background: none; border: none; cursor: pointer; }
     .action-btn-edit:hover { color: #00ff88; }
-    .action-btn-delete { font-family: 'Space Mono', monospace; font-size: 10px; color: #6b6b8a; text-transform: uppercase; transition: 0.2s; }
+    .action-btn-delete { font-family: 'Space Mono', monospace; font-size: 10px; color: #6b6b8a; text-transform: uppercase; transition: 0.2s; background: none; border: none; cursor: pointer; }
     .action-btn-delete:hover { color: #ff3c6e; }
 </style>
 
@@ -110,7 +173,10 @@
     private bool isEditing = false, isUploading = false;
     private string originalImageUrl = string.Empty;
 
-    // ── Load persisted data before rendering the list ──────────
+    // Text area bindings for list fields
+    private string _featuresText = string.Empty;
+    private string _patternsText = string.Empty;
+
     protected override async Task OnInitializedAsync()
     {
         await PortfolioData.EnsureLoadedAsync();
@@ -131,26 +197,45 @@
 
     private async Task HandleSubmit()
     {
+        // Parse list fields from textarea
+        newProject.Features = _featuresText
+            .Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            .ToList();
+
+        newProject.DesignPatterns = _patternsText
+            .Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            .ToList();
+
         if (isEditing)
         {
             if (!string.IsNullOrEmpty(originalImageUrl) && newProject.ImageUrl != originalImageUrl)
                 await FileUploadService.DeleteFileAsync(originalImageUrl);
             PortfolioData.DeleteProject(newProject.Id);
         }
+
         PortfolioData.AddProject(newProject);
-        newProject = new();
-        originalImageUrl = string.Empty;
-        isEditing = false;
+        ResetForm();
     }
 
     private void StartEdit(Project p)
     {
         newProject = new Project
         {
-            Id = p.Id, Title = p.Title, Engine = p.Engine,
-            Description = p.Description, Category = p.Category, ImageUrl = p.ImageUrl
+            Id             = p.Id,
+            Title          = p.Title,
+            Engine         = p.Engine,
+            Description    = p.Description,
+            Category       = p.Category,
+            ImageUrl       = p.ImageUrl,
+            TechStack      = p.TechStack,
+            GithubUrl      = p.GithubUrl,
+            GameUrl        = p.GameUrl,
+            Features       = new List<string>(p.Features),
+            DesignPatterns = new List<string>(p.DesignPatterns),
         };
         originalImageUrl = p.ImageUrl;
+        _featuresText    = string.Join("\n", p.Features);
+        _patternsText    = string.Join("\n", p.DesignPatterns);
         isEditing = true;
     }
 
@@ -158,9 +243,7 @@
     {
         if (isEditing && !string.IsNullOrEmpty(newProject.ImageUrl) && newProject.ImageUrl != originalImageUrl)
             _ = FileUploadService.DeleteFileAsync(newProject.ImageUrl);
-        newProject = new();
-        originalImageUrl = string.Empty;
-        isEditing = false;
+        ResetForm();
     }
 
     private async Task DeleteEntry(Project p)
@@ -168,5 +251,14 @@
         if (!string.IsNullOrEmpty(p.ImageUrl))
             await FileUploadService.DeleteFileAsync(p.ImageUrl);
         PortfolioData.DeleteProject(p.Id);
+    }
+
+    private void ResetForm()
+    {
+        newProject       = new();
+        originalImageUrl = string.Empty;
+        _featuresText    = string.Empty;
+        _patternsText    = string.Empty;
+        isEditing        = false;
     }
 }

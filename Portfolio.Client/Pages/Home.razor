@@ -1,4 +1,4 @@
-@page "/"
+﻿@page "/"
 @inject Portfolio.Client.Services.PortfolioService PortfolioData
 @using Portfolio.Client.Models
 @inject IJSRuntime JS
@@ -101,6 +101,10 @@
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-1">
             @foreach (var project in PortfolioData.GetProjects())
             {
+                var isExpanded = _expandedCards.Contains(project.Id);
+                var shortDesc  = project.Description.Length > 120
+                                ? project.Description[..120].TrimEnd() + "…"
+                                : project.Description;
                 <div class="project-card group relative bg-[#13131f] border border-white/5 p-8 transition-all hover:border-[#00ff88]/30">
                     <div class="absolute top-0 left-0 w-full h-px bg-[#00ff88] scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></div>
                     <div class="aspect-video mb-8 overflow-hidden bg-[#0a0a0f] border border-white/5">
@@ -112,10 +116,27 @@
                         @project.Engine // @project.Category
                     </div>
                     <h3 class="font-['Bebas_Neue'] text-3xl mb-4 tracking-wider">@project.Title</h3>
-                    <p class="text-[#6b6b8a] text-sm leading-relaxed mb-8 font-light">@project.Description</p>
+
+                    <p class="text-[#6b6b8a] text-sm leading-relaxed mb-4 font-light">
+                        @(isExpanded ? project.Description : shortDesc)
+                    </p>
+
+                    @if (project.Description.Length > 120)
+                    {
+                        <button @onclick="() => ToggleExpand(project.Id)"
+                                class="font-['Space_Mono'] text-[9px] uppercase tracking-widest text-[#6b6b8a]
+                                       hover:text-[#00ff88] transition-colors mb-6 block">
+                            @(isExpanded ? "[ Collapse ]" : "[ Read More ]")
+                        </button>
+                    }
+                    else
+                    {
+                        <div class="mb-8"></div>
+                    }
+
                     <div class="flex gap-6">
                         <a href="#" class="font-['Space_Mono'] text-[10px] uppercase text-[#6b6b8a] hover:text-white transition-colors">[ Source ]</a>
-                        <a href="#" class="font-['Space_Mono'] text-[10px] uppercase text-[#00ff88] hover:underline transition-colors">[ Execute ]</a>
+                        <a href="/project/@project.Id" class="font-['Space_Mono'] text-[10px] uppercase text-[#00ff88] hover:underline transition-colors">[ Execute ]</a>
                     </div>
                 </div>
             }
@@ -275,6 +296,18 @@
 @code {
     private bool _loading = true;
 
+    // ── Expand/collapse state per card ───────────────────────────
+    private HashSet<string> _expandedCards = new();
+
+    private void ToggleExpand(string id)
+    {
+        if (_expandedCards.Contains(id))
+            _expandedCards.Remove(id);
+        else
+            _expandedCards.Add(id);
+    }
+
+    // ── Static data ──────────────────────────────────────────────
     private record ExpertiseBar(string Name, int Pct);
     private record HighlightStat(string Number, string Suffix, string Label);
     private record JobItem(string Date, string Company, string Role, string Desc, string[] Tags);
@@ -324,7 +357,6 @@
             "End-to-end game deployment with App Store Optimization for organic acquisition growth."),
     ];
 
-    // ── Load persisted projects before first render ─────────────
     protected override async Task OnInitializedAsync()
     {
         await PortfolioData.EnsureLoadedAsync();
