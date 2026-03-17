@@ -107,28 +107,62 @@
 @code {
     private Project newProject = new();
     private bool isEditing = false, isUploading = false;
-
+    private string originalImageUrl = string.Empty;
+    
+    
     private async Task HandleFileSelected(InputFileChangeEventArgs e) {
         isUploading = true;
+        
+        // 1. Capture the new image URL
         var url = await FileUploadService.UploadFileAsync(e.File);
-        if (!string.IsNullOrEmpty(url)) newProject.ImageUrl = url;
+        
+        if (!string.IsNullOrEmpty(url)) {
+            // 2. If we are editing and already have a different image, delete the "prev" new image 
+            // (In case the user uploads 3 different images before clicking Save)
+            if (isEditing && !string.IsNullOrEmpty(newProject.ImageUrl) && newProject.ImageUrl != originalImageUrl)
+            {
+                await FileUploadService.DeleteFileAsync(newProject.ImageUrl);
+            }
+
+            newProject.ImageUrl = url;
+        }
         isUploading = false;
     }
 
-    private void HandleSubmit() {
-        if (isEditing) PortfolioData.DeleteProject(newProject.Id);
+    private async Task HandleSubmit() {
+        if (isEditing) {
+            // 3. Cleanup logic: If the ImageUrl was changed during this edit session
+            if (!string.IsNullOrEmpty(originalImageUrl) && newProject.ImageUrl != originalImageUrl)
+            {
+                await FileUploadService.DeleteFileAsync(originalImageUrl);
+            }
+
+            PortfolioData.DeleteProject(newProject.Id);
+        }
+        
         PortfolioData.AddProject(newProject);
         newProject = new();
+        originalImageUrl = string.Empty; // Reset tracker
         isEditing = false;
     }
+
 
     private void StartEdit(Project p) {
         newProject = new Project { Id = p.Id, Title = p.Title, Engine = p.Engine, Description = p.Description, Category = p.Category, ImageUrl = p.ImageUrl };
         isEditing = true;
     }
 
-    private void CancelEdit() { newProject = new(); isEditing = false; }
+    private void CancelEdit() { 
+        // 5. If they uploaded a new image but hit cancel, we should delete that "orphaned" new image
+        if (isEditing && !string.IsNullOrEmpty(newProject.ImageUrl) && newProject.ImageUrl != originalImageUrl)
+        {
+            _ = FileUploadService.DeleteFileAsync(newProject.ImageUrl);
+        }
 
+        newProject = new(); 
+        originalImageUrl = string.Empty;
+        isEditing = false; 
+    }
     private async Task DeleteEntry(Project p) {
         if (!string.IsNullOrEmpty(p.ImageUrl)) {
             await FileUploadService.DeleteFileAsync(p.ImageUrl);
