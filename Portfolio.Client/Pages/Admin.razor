@@ -23,28 +23,18 @@
                 <EditForm Model="newProject" OnValidSubmit="HandleSubmit" class="flex flex-col gap-6">
                     <div class="form-group">
                         <label class="admin-label">Entry Name</label>
-                        <InputText @bind-Value="newProject.Title" class="admin-input" placeholder="e.g., Level Editor" />
+                        <InputText @bind-Value="newProject.Title" class="admin-input" placeholder="Project Name" />
                     </div>
 
                     <div class="grid grid-cols-2 gap-4">
                         <div class="form-group">
-                            <label class="admin-label">Core Engine</label>
+                            <label class="admin-label">Engine</label>
                             <InputText @bind-Value="newProject.Engine" class="admin-input" placeholder="Unity" />
                         </div>
                         <div class="form-group">
-                            <label class="admin-label">Classification</label>
+                            <label class="admin-label">Category</label>
                             <InputText @bind-Value="newProject.Category" class="admin-input" placeholder="Tooling" />
                         </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="admin-label">Tech Stack (CSV)</label>
-                        <InputText @bind-Value="newProject.TechStack" class="admin-input" placeholder="C#, Compute Shaders" />
-                    </div>
-
-                    <div class="form-group">
-                        <label class="admin-label">System Overview</label>
-                        <InputTextArea @bind-Value="newProject.Description" rows="4" class="admin-input" placeholder="Detailed logs..." />
                     </div>
 
                     <div class="form-group">
@@ -52,22 +42,26 @@
                         <div class="relative border border-white/10 p-6 bg-[#0a0a0f] hover:border-[#00ff88]/30 transition-colors">
                             <InputFile OnChange="HandleFileSelected" class="absolute inset-0 opacity-0 cursor-pointer z-10" accept=".png,.jpg,.jpeg" />
                             <div class="flex flex-col items-center gap-2">
-                                <span class="text-[10px] text-[#6b6b8a] uppercase tracking-widest">
-                                    @(isUploading ? "Uploading Data..." : string.IsNullOrEmpty(newProject.ImageUrl) ? "Select Image" : "Image Captured")
+                                <span class="text-[10px] text-[#6b6b8a] uppercase tracking-widest text-center">
+                                    @(isUploading ? "Uploading..." : string.IsNullOrEmpty(newProject.ImageUrl) ? "Drop Image Here" : "Image Captured")
                                 </span>
                                 @if (isUploading) { <div class="w-12 h-[1px] bg-[#00ff88] animate-pulse"></div> }
                             </div>
                         </div>
                     </div>
 
+                    <div class="form-group">
+                        <label class="admin-label">Overview</label>
+                        <InputTextArea @bind-Value="newProject.Description" rows="4" class="admin-input" placeholder="System logs..." />
+                    </div>
+
                     <div class="flex flex-col gap-3 pt-4">
-                        <button type="submit" class="bg-[#00ff88] text-[#0a0a0f] font-['Space_Mono'] font-bold text-xs uppercase tracking-[0.2em] py-5 hover:bg-[#00cc6d] hover:shadow-[0_0_30px_rgba(0,255,136,0.2)] transition-all">
+                        <button type="submit" class="bg-[#00ff88] text-[#0a0a0f] font-['Space_Mono'] font-bold text-xs uppercase tracking-[0.2em] py-5 hover:bg-[#00cc6d] transition-all">
                             @(isEditing ? "Overwrite Protocol" : "Execute Entry")
                         </button>
-                        
                         @if (isEditing) {
-                            <button type="button" @onclick="CancelEdit" class="text-[#6b6b8a] font-['Space_Mono'] text-[10px] uppercase tracking-widest hover:text-white py-2 transition-colors">
-                                Cancel Operation
+                            <button type="button" @onclick="CancelEdit" class="text-[#6b6b8a] font-['Space_Mono'] text-[10px] uppercase tracking-widest hover:text-white py-2">
+                                Cancel
                             </button>
                         }
                     </div>
@@ -77,107 +71,37 @@
 
         <div class="lg:col-span-2">
             <h3 class="font-['Space_Mono'] text-[#00ff88] text-xs tracking-[0.2em] uppercase mb-10 border-b border-white/5 pb-6">Active Database Records</h3>
-            
-            <div class="grid grid-cols-1 gap-4">
-                @foreach (var p in PortfolioData.GetProjects()) {
-                    <div class="record-card group">
-                        <div class="flex items-center gap-6">
-                            <div class="relative w-24 h-16 overflow-hidden bg-[#0a0a0f] border border-white/10">
-                                <img src="@p.ImageUrl" class="w-full h-full object-cover opacity-60 group-hover:opacity-100 group-hover:scale-110 transition-all duration-500" onerror="this.src='https://placehold.co/100x60/13131f/6b6b8a?text=NA'" />
-                            </div>
-                            
-                            <div>
-                                <h4 class="font-['Bebas_Neue'] text-2xl tracking-wide group-hover:text-[#00ff88] transition-colors">@p.Title</h4>
-                                <div class="flex items-center gap-3">
-                                    <span class="font-['Space_Mono'] text-[10px] text-[#6b6b8a] uppercase tracking-widest">@p.Engine</span>
-                                    <div class="w-1 h-1 rounded-full bg-white/10"></div>
-                                    <span class="font-['Space_Mono'] text-[10px] text-[#6b6b8a] uppercase tracking-widest">@p.Category</span>
-                                </div>
-                            </div>
+            @foreach (var p in PortfolioData.GetProjects()) {
+                <div class="record-card group mb-4">
+                    <div class="flex items-center gap-6">
+                        <div class="relative w-24 h-16 overflow-hidden bg-[#0a0a0f] border border-white/10">
+                            <img src="@p.ImageUrl" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/100x60/13131f/6b6b8a?text=NA'" />
                         </div>
-
-                        <div class="flex gap-8">
-                            <button @onclick="() => StartEdit(p)" class="action-btn-edit">
-                                <span class="hidden md:inline">Modify</span> [E]
-                            </button>
-                            <button @onclick="() => DeleteEntry(p)" class="action-btn-delete">
-                                <span class="hidden md:inline">Terminate</span> [X]
-                            </button>
+                        <div>
+                            <h4 class="font-['Bebas_Neue'] text-2xl tracking-wide">@p.Title</h4>
+                            <span class="font-['Space_Mono'] text-[10px] text-[#6b6b8a] uppercase">@p.Engine // @p.Category</span>
                         </div>
                     </div>
-                }
-            </div>
+                    <div class="flex gap-8">
+                        <button @onclick="() => StartEdit(p)" class="action-btn-edit">Modify [E]</button>
+                        <button @onclick="() => DeleteEntry(p)" class="action-btn-delete">Terminate [X]</button>
+                    </div>
+                </div>
+            }
         </div>
     </div>
 </section>
 
 <style>
-    .admin-label {
-        display: block;
-        font-family: 'Space Mono', monospace;
-        font-size: 10px;
-        color: #6b6b8a;
-        text-transform: uppercase;
-        letter-spacing: 0.2em;
-        margin-bottom: 8px;
-    }
-
-    .admin-input {
-        width: 100%;
-        background-color: #0a0a0f;
-        border: 1px solid rgba(255, 255, 255, 0.05);
-        padding: 16px;
-        font-size: 13px;
-        color: #e8e8f0;
-        outline: none;
-        transition: all 0.3s;
-    }
-
-    .admin-input:focus {
-        border-color: #00ff88;
-        background-color: rgba(0, 255, 136, 0.02);
-    }
-
-    .record-card {
-        background-color: #13131f;
-        border: 1px solid rgba(255, 255, 255, 0.05);
-        padding: 24px 32px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        transition: all 0.3s;
-    }
-
-    .record-card:hover {
-        border-color: rgba(0, 255, 136, 0.2);
-        background-color: rgba(255, 255, 255, 0.01);
-    }
-
-    .action-btn-edit {
-        font-family: 'Space Mono', monospace;
-        font-size: 10px;
-        color: #6b6b8a;
-        text-transform: uppercase;
-        letter-spacing: 0.1em;
-        transition: all 0.2s;
-    }
-
-    .action-btn-edit:hover {
-        color: #00ff88;
-    }
-
-    .action-btn-delete {
-        font-family: 'Space Mono', monospace;
-        font-size: 10px;
-        color: #6b6b8a;
-        text-transform: uppercase;
-        letter-spacing: 0.1em;
-        transition: all 0.2s;
-    }
-
-    .action-btn-delete:hover {
-        color: #ff3c6e;
-    }
+    .admin-label { display: block; font-family: 'Space Mono', monospace; font-size: 10px; color: #6b6b8a; text-transform: uppercase; letter-spacing: 0.2em; margin-bottom: 8px; }
+    .admin-input { width: 100%; background-color: #0a0a0f; border: 1px solid rgba(255, 255, 255, 0.05); padding: 16px; font-size: 13px; color: #e8e8f0; outline: none; transition: all 0.3s; }
+    .admin-input:focus { border-color: #00ff88; background-color: rgba(0, 255, 136, 0.02); }
+    .record-card { background-color: #13131f; border: 1px solid rgba(255, 255, 255, 0.05); padding: 24px 32px; display: flex; justify-content: space-between; align-items: center; transition: all 0.3s; }
+    .record-card:hover { border-color: rgba(0, 255, 136, 0.2); }
+    .action-btn-edit { font-family: 'Space Mono', monospace; font-size: 10px; color: #6b6b8a; text-transform: uppercase; transition: 0.2s; }
+    .action-btn-edit:hover { color: #00ff88; }
+    .action-btn-delete { font-family: 'Space Mono', monospace; font-size: 10px; color: #6b6b8a; text-transform: uppercase; transition: 0.2s; }
+    .action-btn-delete:hover { color: #ff3c6e; }
 </style>
 
 @code {
@@ -199,28 +123,16 @@
     }
 
     private void StartEdit(Project p) {
-        // Deep clone for editing
-        newProject = new Project { 
-            Id = p.Id, 
-            Title = p.Title, 
-            Engine = p.Engine, 
-            Description = p.Description, 
-            Category = p.Category, 
-            ImageUrl = p.ImageUrl,
-            TechStack = p.TechStack,
-            GameUrl = p.GameUrl,
-            GithubUrl = p.GithubUrl
-        };
+        newProject = new Project { Id = p.Id, Title = p.Title, Engine = p.Engine, Description = p.Description, Category = p.Category, ImageUrl = p.ImageUrl };
         isEditing = true;
     }
 
-    private void CancelEdit() {
-        newProject = new();
-        isEditing = false;
-    }
+    private void CancelEdit() { newProject = new(); isEditing = false; }
 
     private async Task DeleteEntry(Project p) {
-        if (!string.IsNullOrEmpty(p.ImageUrl)) await FileUploadService.DeleteFileAsync(p.ImageUrl);
+        if (!string.IsNullOrEmpty(p.ImageUrl)) {
+            await FileUploadService.DeleteFileAsync(p.ImageUrl);
+        }
         PortfolioData.DeleteProject(p.Id);
     }
 }

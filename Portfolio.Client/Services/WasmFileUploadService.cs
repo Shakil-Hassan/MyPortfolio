@@ -34,9 +34,25 @@ public class WasmFileUploadService : IFileUploadService
         return string.Empty;
     }
 
+
+
     public async Task DeleteFileAsync(string fileUrl)
     {
-        await _httpClient.DeleteAsync($"/api/upload?filePath={Uri.EscapeDataString(fileUrl)}");
+        if (string.IsNullOrEmpty(fileUrl)) return;
+
+        // Convert "http://localhost:5087/uploads/file.jpg" 
+        // to just "/uploads/file.jpg"
+        var uri = new Uri(fileUrl);
+        var relativePath = uri.AbsolutePath; 
+
+        var encodedPath = Uri.EscapeDataString(relativePath);
+        var response = await _httpClient.DeleteAsync($"/api/upload?filePath={encodedPath}");
+        if (!response.IsSuccessStatusCode)
+        {
+            // Log error if the physical file couldn't be removed
+            var error = await response.Content.ReadAsStringAsync();
+            Console.WriteLine($"System Warning: Physical file deletion failed. {error}");
+        }
     }
 
     private class UploadResult { public string Url { get; set; } = string.Empty; }

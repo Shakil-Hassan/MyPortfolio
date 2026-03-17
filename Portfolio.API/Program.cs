@@ -38,9 +38,17 @@ app.MapPost("/api/upload", async (IFormFile file, IWebHostEnvironment env) =>
 app.MapDelete("/api/upload", (string filePath, IWebHostEnvironment env) =>
 {
     var webRoot = env.WebRootPath ?? Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
-    var physicalPath = Path.Combine(webRoot, filePath.TrimStart('/'));
-    if (File.Exists(physicalPath)) File.Delete(physicalPath);
-    return Results.Ok();
+    
+    // filePath is now "/uploads/guid.jpg"
+    var relativePath = filePath.TrimStart('/'); 
+    var physicalPath = Path.Combine(webRoot, relativePath);
+
+    if (File.Exists(physicalPath))
+    {
+        File.Delete(physicalPath);
+        return Results.Ok();
+    }
+    return Results.NotFound("File not found on disk.");
 });
 
 app.Run();
