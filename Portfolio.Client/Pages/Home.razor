@@ -1,26 +1,374 @@
 ﻿@page "/"
 @inject Portfolio.Client.Services.PortfolioService PortfolioData
 @using Portfolio.Client.Models
+@inject IJSRuntime JS
+@implements IDisposable
 
-<section class="min-h-[70vh] flex flex-col justify-center px-6 md:px-24">
-    <h1 class="font-['Bebas_Neue'] text-7xl md:text-[100px] leading-none mb-4">
-        BUILDING <span class="text-transparent" style="-webkit-text-stroke: 1px #00ff88">GAMES</span><br />
-        & SYSTEMS
-    </h1>
-    <p class="text-[#6b6b8a] max-w-xl">3+ years bridging technical complexity and creative vision.</p>
+<!-- ═══════════════════════════════════════════
+     HERO
+════════════════════════════════════════════ -->
+<section class="relative min-h-screen flex flex-col justify-center px-6 md:px-24 overflow-hidden pb-32">
+
+    <!-- Grid background — styled via app.css .hero-grid -->
+    <div class="hero-grid"></div>
+
+    <!-- Orbs — animated via app.css .orb1 / .orb2 -->
+    <div class="orb1 absolute w-[600px] h-[600px] rounded-full pointer-events-none -top-48 -right-24"
+         style="background:radial-gradient(circle,rgba(0,255,136,0.12) 0%,transparent 70%);filter:blur(120px)"></div>
+    <div class="orb2 absolute w-[400px] h-[400px] rounded-full pointer-events-none bottom-0 -left-24"
+         style="background:radial-gradient(circle,rgba(124,58,237,0.15) 0%,transparent 70%);filter:blur(120px)"></div>
+
+    <div class="relative z-10">
+
+        <!-- Status badge -->
+        <div class="anim-fadeup-1 inline-flex items-center gap-2 mb-8 w-fit
+                    font-['Space_Mono'] text-[11px] uppercase tracking-widest text-[#00ff88]
+                    bg-[#00ff88]/[0.07] border border-[#00ff88]/20 px-4 py-2">
+            <span class="status-dot w-1.5 h-1.5 rounded-full bg-[#00ff88]"></span>
+            Available for Remote Work
+        </div>
+
+        <!-- Eyebrow -->
+        <div class="anim-fadeup-1 flex items-center gap-3 mb-6
+                    font-['Space_Mono'] text-xs text-[#00ff88] tracking-[0.3em] uppercase">
+            <span class="inline-block w-10 h-px bg-[#00ff88]"></span>
+            Game Developer &amp; Tools Engineer
+        </div>
+
+        <!-- Headline -->
+        <h1 class="anim-fadeup-2 font-['Bebas_Neue'] leading-[0.85] tracking-tight mb-4"
+            style="font-size:clamp(72px,12vw,160px)">
+            BUILDING <span style="-webkit-text-stroke:1px #00ff88;color:transparent">GAMES</span><br />
+            &amp; SYSTEMS
+        </h1>
+
+        <!-- Sub-title -->
+        <p class="anim-fadeup-3 font-['Bebas_Neue'] text-[#6b6b8a] tracking-widest uppercase mb-10"
+           style="font-size:clamp(24px,4vw,52px)">
+            Unity · Godot · C# · C++
+        </p>
+
+        <!-- Description -->
+        <p class="anim-fadeup-4 max-w-xl text-[#6b6b8a] text-lg font-light leading-relaxed mb-12">
+            Specializing in <strong class="text-white font-medium">Tools Engineering</strong> and modular
+            systems architecture. 3+ years bridging technical complexity and creative vision.
+        </p>
+
+        <!-- CTAs + stats -->
+        <div class="anim-fadeup-5 flex flex-wrap gap-6 items-center">
+            <a href="#contact"
+               class="btn-primary relative overflow-hidden bg-[#00ff88] text-[#0a0a0f]
+                      font-['Space_Mono'] font-bold text-xs uppercase px-10 py-5
+                      hover:shadow-[0_0_40px_rgba(0,255,136,0.3)] hover:-translate-y-0.5 transition-all">
+                Initialize Contact
+            </a>
+            <a href="#experience"
+               class="font-['Space_Mono'] text-xs tracking-widest uppercase text-[#e8e8f0]
+                      border-b border-[#6b6b8a] pb-1 hover:text-[#00ff88] hover:border-[#00ff88] transition-all">
+                View Experience →
+            </a>
+            <div class="flex gap-8 ml-4">
+                <div class="text-right">
+                    <span class="block font-['Bebas_Neue'] text-4xl text-[#00ff88] leading-none">3+</span>
+                    <span class="font-['Space_Mono'] text-[9px] text-[#6b6b8a] uppercase tracking-widest">Years Exp</span>
+                </div>
+                <div class="text-right">
+                    <span class="block font-['Bebas_Neue'] text-4xl text-[#00ff88] leading-none">20+</span>
+                    <span class="font-['Space_Mono'] text-[9px] text-[#6b6b8a] uppercase tracking-widest">Tech Interviews</span>
+                </div>
+                <div class="text-right">
+                    <span class="block font-['Bebas_Neue'] text-4xl text-[#00ff88] leading-none">2</span>
+                    <span class="font-['Space_Mono'] text-[9px] text-[#6b6b8a] uppercase tracking-widest">Engines</span>
+                </div>
+            </div>
+        </div>
+    </div>
 </section>
 
-<section class="px-6 md:px-24 pb-24">
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-        @foreach (var project in PortfolioData.GetProjects()) {
-            <div class="bg-[#13131f] border border-white/5 overflow-hidden group hover:border-[#00ff88]/40 transition-all">
-                <div class="h-48 bg-cover bg-center" style="background-image: url('@project.ImageUrl'), url('https://placehold.co/600x400?text=No+Preview')"></div>
-                <div class="p-6">
-                    <div class="text-[10px] text-[#00ff88] uppercase tracking-widest mb-2">@project.Engine // @project.Category</div>
-                    <h3 class="text-2xl font-['Bebas_Neue'] mb-4">@project.Title</h3>
-                    <p class="text-[#6b6b8a] text-sm font-light">@project.Description</p>
+<!-- ═══════════════════════════════════════════
+     MARQUEE
+════════════════════════════════════════════ -->
+<div class="overflow-hidden border-y border-white/5 py-4 bg-[#13131f]/50">
+    <div class="marquee-track">
+        @foreach (var item in MarqueeItems.Concat(MarqueeItems))
+        {
+            <span class="font-['Bebas_Neue'] text-2xl text-[#6b6b8a] px-10 tracking-[0.2em] whitespace-nowrap">
+                <span class="text-[#00ff88] mr-10">✦</span>@item
+            </span>
+        }
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     PROJECTS
+════════════════════════════════════════════ -->
+<section id="projects" class="px-6 md:px-24 py-32">
+    <div class="flex items-center gap-3 mb-4">
+        <div class="h-px w-8 bg-[#00ff88]"></div>
+        <span class="font-['Space_Mono'] text-[#00ff88] text-[10px] tracking-[0.3em] uppercase">Deployment Log</span>
+    </div>
+    <h2 class="reveal font-['Bebas_Neue'] mb-20 tracking-wide uppercase"
+        style="font-size:clamp(40px,8vw,100px)">
+        Active <span style="-webkit-text-stroke:1px #00ff88;color:transparent">Records</span>
+    </h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-1">
+        @foreach (var project in PortfolioData.GetProjects())
+        {
+            <div class="project-card group relative bg-[#13131f] border border-white/5 p-8 transition-all hover:border-[#00ff88]/30">
+                <!-- Top border slide-in — driven by app.css .skill-card::before pattern reused here via group -->
+                <div class="absolute top-0 left-0 w-full h-px bg-[#00ff88] scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></div>
+
+                <div class="aspect-video mb-8 overflow-hidden bg-[#0a0a0f] border border-white/5">
+                    <img src="@project.ImageUrl"
+                        class="w-full h-full object-cover transition-all duration-700"
+                        onerror="this.src='https://placehold.co/600x400/13131f/6b6b8a?text=NO+IMAGE'" />
+                </div>
+
+                <div class="font-['Space_Mono'] text-[10px] text-[#00ff88] uppercase tracking-widest mb-3">
+                    @project.Engine // @project.Category
+                </div>
+                <h3 class="font-['Bebas_Neue'] text-3xl mb-4 tracking-wider">@project.Title</h3>
+                <p class="text-[#6b6b8a] text-sm leading-relaxed mb-8 font-light">@project.Description</p>
+
+                <div class="flex gap-6">
+                    <a href="#" class="font-['Space_Mono'] text-[10px] uppercase text-[#6b6b8a] hover:text-white transition-colors">[ Source ]</a>
+                    <a href="#" class="font-['Space_Mono'] text-[10px] uppercase text-[#00ff88] hover:underline transition-colors">[ Execute ]</a>
                 </div>
             </div>
         }
     </div>
 </section>
+
+<!-- ═══════════════════════════════════════════
+     ABOUT
+════════════════════════════════════════════ -->
+<section id="about" class="px-6 md:px-24 py-32 border-t border-white/5">
+    <div class="flex items-center gap-3 mb-4">
+        <div class="h-px w-8 bg-[#00ff88]"></div>
+        <span class="font-['Space_Mono'] text-[#00ff88] text-[10px] tracking-[0.3em] uppercase">About</span>
+    </div>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-24 items-start">
+
+        <!-- Bio -->
+        <div class="reveal">
+            <h2 class="font-['Bebas_Neue'] mb-10" style="font-size:clamp(40px,6vw,80px)">
+                THE BUILDER<br />
+                <span style="-webkit-text-stroke:1px #00ff88;color:transparent">BEHIND THE BUILD</span>
+            </h2>
+            <p class="text-[#6b6b8a] leading-relaxed mb-6 text-lg font-light">
+                My biggest strength is <strong class="text-white font-medium">Tooling</strong>. I've developed
+                custom <strong class="text-white font-medium">Dynamic Level Editors</strong> that allow designers to
+                iterate without dev intervention — drastically cutting time-to-market.
+            </p>
+            <p class="text-[#6b6b8a] leading-relaxed mb-6 font-light">
+                I'm deeply familiar with the <strong class="text-white font-medium">full game lifecycle</strong>:
+                from physics prototypes to Play Store publishing and ASO optimization.
+            </p>
+            <div class="flex flex-wrap gap-3 mt-8">
+                @foreach (var tag in new[] { "Unity","Godot","C#","C++","GDScript","Editor Scripting" })
+                {
+                    <span class="px-4 py-2 border border-white/10 bg-white/5 font-['Space_Mono'] text-[10px]
+                                 text-[#6b6b8a] uppercase tracking-widest
+                                 hover:border-[#00ff88] hover:text-[#00ff88] transition-all cursor-default">@tag</span>
+                }
+            </div>
+        </div>
+
+        <!-- Expertise bars -->
+        <div class="reveal expertise-list" style="transition-delay:0.2s">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="h-px w-6 bg-[#00ff88]"></div>
+                <span class="font-['Space_Mono'] text-[#00ff88] text-[10px] tracking-[0.3em] uppercase">Core Expertise</span>
+            </div>
+            @foreach (var bar in ExpertiseBars)
+            {
+                <div class="mb-6">
+                    <div class="flex justify-between mb-2">
+                        <span class="font-['Space_Mono'] text-xs tracking-widest uppercase text-[#e8e8f0]">@bar.Name</span>
+                        <span class="font-['Space_Mono'] text-xs text-[#00ff88]">@bar.Pct%</span>
+                    </div>
+                    <div class="h-px bg-white/[0.07] relative overflow-visible">
+                        <div class="exp-bar" data-width="@bar.Pct"></div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     HIGHLIGHTS STRIP
+════════════════════════════════════════════ -->
+<div class="grid grid-cols-2 md:grid-cols-4 gap-px reveal">
+    @foreach (var h in Highlights)
+    {
+        <div class="highlight-card relative overflow-hidden bg-[#13131f] border border-white/[0.07] p-10
+                    hover:bg-[#7c3aed]/[0.05] hover:border-[#7c3aed]/20 transition-all">
+            <div class="font-['Bebas_Neue'] text-6xl leading-none text-[#00ff88] mb-2">
+                @h.Number<span class="text-3xl text-[#6b6b8a]">@h.Suffix</span>
+            </div>
+            <div class="font-['Space_Mono'] text-[11px] tracking-[0.15em] uppercase text-[#6b6b8a]">@h.Label</div>
+        </div>
+    }
+</div>
+
+<!-- ═══════════════════════════════════════════
+     EXPERIENCE
+════════════════════════════════════════════ -->
+<section id="experience" class="px-6 md:px-24 py-32 border-t border-white/5">
+    <div class="flex items-center gap-3 mb-4">
+        <div class="h-px w-8 bg-[#00ff88]"></div>
+        <span class="font-['Space_Mono'] text-[#00ff88] text-[10px] tracking-[0.3em] uppercase">Career</span>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-16 md:gap-20 items-start">
+
+        <!-- Timeline -->
+        <div>
+            <h2 class="reveal font-['Bebas_Neue'] leading-none mb-14" style="font-size:clamp(40px,6vw,80px)">
+                Work<br />History
+            </h2>
+            <div class="timeline">
+                @foreach (var job in Jobs)
+                {
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="flex gap-4 items-center mb-2">
+                            <span class="font-['Space_Mono'] text-[11px] text-[#00ff88] tracking-widest">@job.Date</span>
+                            <span class="font-['Space_Mono'] text-[11px] text-[#6b6b8a] tracking-widest">@job.Company</span>
+                        </div>
+                        <div class="font-['Bebas_Neue'] text-3xl tracking-wide text-[#e8e8f0] mb-3">@job.Role</div>
+                        <p class="text-[15px] text-[#6b6b8a] font-light leading-[1.8] mb-4">@job.Desc</p>
+                        <div class="flex flex-wrap gap-2">
+                            @foreach (var tag in job.Tags)
+                            {
+                                <span class="font-['Space_Mono'] text-[10px] tracking-widest uppercase px-3 py-1
+                                             bg-[#00ff88]/[0.05] border border-[#00ff88]/15 text-[#00ff88]">@tag</span>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Deliverables -->
+        <div>
+            <h2 class="reveal font-['Bebas_Neue'] leading-none mb-14"
+                style="font-size:clamp(40px,6vw,80px);transition-delay:0.2s">
+                Key<br />Deliverables
+            </h2>
+            <div class="flex flex-col gap-4">
+                @foreach (var d in Deliverables)
+                {
+                    <div class="highlight-card reveal relative overflow-hidden bg-[#13131f]
+                                border border-white/[0.07] p-7
+                                hover:bg-[#7c3aed]/[0.05] hover:border-[#7c3aed]/20 transition-all">
+                        <div class="font-['Space_Mono'] text-[11px] tracking-[0.15em] uppercase text-[#00ff88] mb-3">@d.Label</div>
+                        <div class="text-[15px] text-[#e8e8f0] font-medium mb-2">@d.Title</div>
+                        <div class="text-[13px] text-[#6b6b8a] font-light leading-[1.7]">@d.Desc</div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     CONTACT
+════════════════════════════════════════════ -->
+<section id="contact"
+         class="contact-section relative overflow-hidden text-center
+                bg-[#13131f] border-y border-white/[0.07] px-6 py-40">
+    <h2 class="reveal font-['Bebas_Neue'] leading-none mb-8" style="font-size:clamp(48px,8vw,100px)">
+        LET'S BUILD <span style="-webkit-text-stroke:1px #00ff88;color:transparent">TOGETHER</span>
+    </h2>
+    <p class="reveal text-[#6b6b8a] mb-12 max-w-md mx-auto font-light" style="transition-delay:0.2s">
+        Currently seeking remote opportunities where I can optimize production pipelines through tools engineering.
+    </p>
+    <div class="reveal flex flex-wrap justify-center gap-8" style="transition-delay:0.3s">
+        <a href="mailto:hello@example.com"
+           class="font-['Space_Mono'] text-xs border border-white/10 px-10 py-5 uppercase
+                  hover:border-[#00ff88] hover:text-[#00ff88] hover:shadow-[0_0_30px_rgba(0,255,136,0.12)]
+                  hover:-translate-y-0.5 transition-all tracking-widest">
+            ✉ Email Me
+        </a>
+        <a href="https://linkedin.com" target="_blank"
+           class="font-['Space_Mono'] text-xs border border-white/10 px-10 py-5 uppercase
+                  hover:border-[#00ff88] hover:text-[#00ff88] hover:shadow-[0_0_30px_rgba(0,255,136,0.12)]
+                  hover:-translate-y-0.5 transition-all tracking-widest">
+            in LinkedIn
+        </a>
+        <a href="https://github.com" target="_blank"
+           class="font-['Space_Mono'] text-xs border border-white/10 px-10 py-5 uppercase
+                  hover:border-[#00ff88] hover:text-[#00ff88] hover:shadow-[0_0_30px_rgba(0,255,136,0.12)]
+                  hover:-translate-y-0.5 transition-all tracking-widest">
+            ⌥ GitHub
+        </a>
+        <a href="#"
+           class="font-['Space_Mono'] text-xs border border-white/10 px-10 py-5 uppercase
+                  hover:border-[#00ff88] hover:text-[#00ff88] hover:shadow-[0_0_30px_rgba(0,255,136,0.12)]
+                  hover:-translate-y-0.5 transition-all tracking-widest">
+            ↓ Resume PDF
+        </a>
+    </div>
+</section>
+
+@code {
+    private record ExpertiseBar(string Name, int Pct);
+    private record HighlightStat(string Number, string Suffix, string Label);
+    private record JobItem(string Date, string Company, string Role, string Desc, string[] Tags);
+    private record DeliverableItem(string Label, string Title, string Desc);
+
+    private static readonly string[] MarqueeItems =
+        ["Unity 3D","Godot Engine","C Sharp","GDScript","Level Editor","DOTween","Firebase","Play Store ASO","Git & SourceTree","LevelPlay SDK"];
+
+    private static readonly ExpertiseBar[] ExpertiseBars =
+    [
+        new("Tooling & Editor Scripting", 96),
+        new("Unity / C#",                94),
+        new("Godot / GDScript",           88),
+        new("Systems Architecture",       90),
+        new("Analytics & SDK Integration",82),
+        new("Git / Version Control",      92),
+    ];
+
+    private static readonly HighlightStat[] Highlights =
+    [
+        new("3",   "+", "Years of Game Dev Experience"),
+        new("20",  "+", "Technical Interviews Conducted"),
+        new("100", "%", "Remote-Ready Workflow"),
+        new("∞",   "",  "Passion for Process Optimization"),
+    ];
+
+    private static readonly JobItem[] Jobs =
+    [
+        new("2022 — Present", "Game Studio",    "Senior Game Developer",
+            "Built custom Dynamic Level Editors enabling designers to iterate independently, reducing dev intervention and cutting time-to-market.",
+            ["Unity","C#","Editor Scripting","DOTween"]),
+        new("2021 — 2022",   "Indie / Contract","Game Developer",
+            "Developed full-cycle mobile games from physics prototyping through Play Store publishing and ASO. Integrated Firebase and ByteBrew.",
+            ["Godot","GDScript","Firebase","ASO"]),
+        new("2021",          "Early Career",    "Junior Developer",
+            "Established foundations in game systems architecture, version control, and cross-functional team collaboration.",
+            ["C++","Git","SourceTree"]),
+    ];
+
+    private static readonly DeliverableItem[] Deliverables =
+    [
+        new("01 — Level Editor","Dynamic Level Editor System",
+            "Custom Unity tooling enabling non-dev designers to build and publish levels without engineering bottlenecks."),
+        new("02 — Analytics",   "Data Pipeline Integration",
+            "Full integration of LevelPlay, Firebase, and ByteBrew for real-time retention tracking."),
+        new("03 — Publishing",  "Play Store Publishing & ASO",
+            "End-to-end game deployment with App Store Optimization for organic acquisition growth."),
+    ];
+
+    // ── Called by JS interop after render ──────────────────────
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+            await JS.InvokeVoidAsync("portfolioInit");
+    }
+
+    public void Dispose() { }
+}

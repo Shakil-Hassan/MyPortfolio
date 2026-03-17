@@ -1,19 +1,26 @@
+/* ============================================================
+   app.css  —  wwwroot/css/app.css
+   Your existing styles + all additions needed for Home.razor
+   ============================================================ */
+
+/* ── CSS VARIABLES ─────────────────────────────────────────── */
 :root {
-  --bg: #0a0a0f;
+  --bg:      #0a0a0f;
   --surface: #13131f;
-  --accent: #00ff88;
+  --accent:  #00ff88;
   --accent3: #7c3aed;
-  --text: #e8e8f0;
-  --muted: #6b6b8a;
-  --border: rgba(255,255,255,0.07);
+  --text:    #e8e8f0;
+  --muted:   #6b6b8a;
+  --border:  rgba(255,255,255,0.07);
 }
 
+/* ── BASE ──────────────────────────────────────────────────── */
 body {
   background-color: var(--bg);
   cursor: none;
 }
 
-/* NOISE OVERLAY */
+/* ── NOISE OVERLAY (your existing) ────────────────────────── */
 body::before {
   content: '';
   position: fixed;
@@ -24,17 +31,211 @@ body::before {
   z-index: 1000;
 }
 
+/* ── SCANLINES ─────────────────────────────────────────────── */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.03) 2px,
+    rgba(0,0,0,0.03) 4px
+  );
+  pointer-events: none;
+  z-index: 999;
+}
+
+/* ── BLINK (your existing) ─────────────────────────────────── */
 .blink {
   animation: blink 1s step-end infinite;
 }
-
 @keyframes blink {
   0%, 100% { opacity: 1; }
-  50% { opacity: 0; }
+  50%       { opacity: 0; }
 }
 
-/* Custom Scrollbar */
+/* ── CUSTOM SCROLLBAR (your existing) ─────────────────────── */
 ::-webkit-scrollbar { width: 8px; }
 ::-webkit-scrollbar-track { background: var(--bg); }
 ::-webkit-scrollbar-thumb { background: var(--muted); border-radius: 4px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+/* ── HERO GRID ─────────────────────────────────────────────── */
+.hero-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(0,255,136,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,255,136,0.03) 1px, transparent 1px);
+  background-size: 60px 60px;
+  animation: grid-drift 20s linear infinite;
+}
+@keyframes grid-drift {
+  from { transform: translateY(0); }
+  to   { transform: translateY(60px); }
+}
+
+* {
+  outline: none;
+}
+
+/* ── FLOATING ORBS ─────────────────────────────────────────── */
+.orb1 { animation: float1 8s ease-in-out infinite; }
+.orb2 { animation: float2 10s ease-in-out infinite; }
+
+@keyframes float1 {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50%       { transform: translateY(-40px) scale(1.05); }
+}
+@keyframes float2 {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50%       { transform: translateY(30px) scale(0.95); }
+}
+
+/* ── HERO FADE-UP ENTRANCE ─────────────────────────────────── */
+@keyframes fadeup {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.anim-fadeup-1 { opacity: 0; animation: fadeup 0.8s 0.2s forwards; }
+.anim-fadeup-2 { opacity: 0; animation: fadeup 0.8s 0.4s forwards; }
+.anim-fadeup-3 { opacity: 0; animation: fadeup 0.8s 0.6s forwards; }
+.anim-fadeup-4 { opacity: 0; animation: fadeup 0.8s 0.8s forwards; }
+.anim-fadeup-5 { opacity: 0; animation: fadeup 0.8s 1.0s forwards; }
+.anim-fadeup-6 { opacity: 0; animation: fadeup 0.8s 1.2s forwards; }
+.anim-fadeup-7 { opacity: 0; animation: fadeup 0.8s 1.4s forwards; }
+
+/* ── STATUS DOT PULSE ──────────────────────────────────────── */
+.status-dot { animation: status-pulse 2s ease-in-out infinite; }
+@keyframes status-pulse {
+  0%, 100% { box-shadow: 0 0 8px var(--accent); }
+  50%       { box-shadow: 0 0 20px var(--accent), 0 0 40px rgba(0,255,136,0.3); }
+}
+
+/* ── SCROLL HINT LINE ──────────────────────────────────────── */
+.scroll-line {
+  width: 1px;
+  height: 60px;
+  background: linear-gradient(to bottom, var(--accent), transparent);
+  animation: scroll-pulse 2s ease-in-out infinite;
+}
+@keyframes scroll-pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.3; }
+}
+
+/* ── MARQUEE ───────────────────────────────────────────────── */
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee 20s linear infinite;
+}
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+/* ── SCROLL REVEAL ─────────────────────────────────────────── */
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ── EXPERTISE BARS ────────────────────────────────────────── */
+.exp-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--accent3));
+  width: 0;
+  transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+.exp-bar::after {
+  content: '';
+  position: absolute;
+  right: -3px; top: -3px;
+  width: 8px; height: 8px;
+  background: var(--accent);
+  border-radius: 50%;
+  box-shadow: 0 0 10px var(--accent);
+}
+
+/* ── HIGHLIGHT CARD corner accent ──────────────────────────── */
+.highlight-card { position: relative; overflow: hidden; }
+.highlight-card::after {
+  content: '';
+  position: absolute;
+  bottom: 0; right: 0;
+  width: 60px; height: 60px;
+  border-top: 1px solid var(--border);
+  border-left: 1px solid var(--border);
+  transform: translate(30px, 30px);
+  transition: all 0.3s;
+}
+.highlight-card:hover::after {
+  transform: translate(0, 0);
+  border-color: var(--accent3);
+}
+
+/* ── TIMELINE ──────────────────────────────────────────────── */
+.timeline { position: relative; padding-left: 32px; }
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 8px; bottom: 0;
+  width: 1px;
+  background: linear-gradient(to bottom, var(--accent), transparent);
+}
+.timeline-item {
+  position: relative;
+  margin-bottom: 56px;
+  opacity: 0;
+  transform: translateX(-20px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.timeline-item.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+/* The dot is positioned relative to .timeline-item */
+.timeline-dot {
+  position: absolute;
+  left: -38px; top: 8px;
+  width: 12px; height: 12px;
+  background: var(--bg);
+  border: 2px solid var(--accent);
+  border-radius: 50%;
+  box-shadow: 0 0 12px rgba(0,255,136,0.4);
+}
+
+/* ── CONTACT SECTION watermark ─────────────────────────────── */
+.contact-section::before {
+  content: 'HIRE ME';
+  position: absolute;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(100px, 20vw, 240px);
+  color: rgba(0,255,136,0.03);
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  letter-spacing: 0.1em;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+/* ── BTN-PRIMARY shimmer ───────────────────────────────────── */
+.btn-primary { position: relative; overflow: hidden; display: inline-block; }
+.btn-primary::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255,255,255,0.15);
+  transform: translateX(-100%);
+  transition: transform 0.3s ease;
+}
+.btn-primary:hover::before { transform: translateX(0); }

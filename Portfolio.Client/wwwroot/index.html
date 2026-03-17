@@ -20,21 +20,10 @@
 
     <script src="_framework/blazor.webassembly.js"></script>
 
-    <script>
-        document.addEventListener('mousemove', (e) => {
-            const cursor = document.getElementById('cursor');
-            const cursorRing = document.getElementById('cursorRing');
-            if(cursor && cursorRing) {
-                cursor.style.left = e.clientX + 'px';
-                cursor.style.top = e.clientY + 'px';
-                
-                // Slight delay effect for the ring
-                setTimeout(() => {
-                    cursorRing.style.left = e.clientX + 'px';
-                    cursorRing.style.top = e.clientY + 'px';
-                }, 50);
-            }
-        });
-    </script>
+    <!--
+        ✅ portfolio.js loaded AFTER blazor.webassembly.js
+        ✅ Removed the old inline cursor script — portfolio.js handles it
+    -->
+    <script src="js/portfolio.js"></script>
 </body>
 </html>
