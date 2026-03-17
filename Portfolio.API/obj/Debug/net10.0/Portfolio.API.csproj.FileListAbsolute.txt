@@ -33,3 +33,4 @@ D:\Personal\Projects\MyPortfolio\Portfolio.API\obj\Debug\net10.0\refint\Portfoli
 D:\Personal\Projects\MyPortfolio\Portfolio.API\obj\Debug\net10.0\Portfolio.API.pdb
 D:\Personal\Projects\MyPortfolio\Portfolio.API\obj\Debug\net10.0\Portfolio.API.genruntimeconfig.cache
 D:\Personal\Projects\MyPortfolio\Portfolio.API\obj\Debug\net10.0\ref\Portfolio.API.dll
+D:\Personal\Projects\MyPortfolio\Portfolio.API\bin\Debug\net10.0\projects.json

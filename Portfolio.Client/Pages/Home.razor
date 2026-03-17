@@ -1,60 +1,42 @@
-﻿@page "/"
+@page "/"
 @inject Portfolio.Client.Services.PortfolioService PortfolioData
 @using Portfolio.Client.Models
 @inject IJSRuntime JS
 @implements IDisposable
 
-<!-- ═══════════════════════════════════════════
-     HERO
-════════════════════════════════════════════ -->
+<!-- HERO -->
 <section class="relative min-h-screen flex flex-col justify-center px-6 md:px-24 overflow-hidden pb-32">
-
-    <!-- Grid background — styled via app.css .hero-grid -->
     <div class="hero-grid"></div>
-
-    <!-- Orbs — animated via app.css .orb1 / .orb2 -->
     <div class="orb1 absolute w-[600px] h-[600px] rounded-full pointer-events-none -top-48 -right-24"
          style="background:radial-gradient(circle,rgba(0,255,136,0.12) 0%,transparent 70%);filter:blur(120px)"></div>
     <div class="orb2 absolute w-[400px] h-[400px] rounded-full pointer-events-none bottom-0 -left-24"
          style="background:radial-gradient(circle,rgba(124,58,237,0.15) 0%,transparent 70%);filter:blur(120px)"></div>
 
     <div class="relative z-10">
-
-        <!-- Status badge -->
         <div class="anim-fadeup-1 inline-flex items-center gap-2 mb-8 w-fit
                     font-['Space_Mono'] text-[11px] uppercase tracking-widest text-[#00ff88]
                     bg-[#00ff88]/[0.07] border border-[#00ff88]/20 px-4 py-2">
             <span class="status-dot w-1.5 h-1.5 rounded-full bg-[#00ff88]"></span>
             Available for Remote Work
         </div>
-
-        <!-- Eyebrow -->
         <div class="anim-fadeup-1 flex items-center gap-3 mb-6
                     font-['Space_Mono'] text-xs text-[#00ff88] tracking-[0.3em] uppercase">
             <span class="inline-block w-10 h-px bg-[#00ff88]"></span>
             Game Developer &amp; Tools Engineer
         </div>
-
-        <!-- Headline -->
         <h1 class="anim-fadeup-2 font-['Bebas_Neue'] leading-[0.85] tracking-tight mb-4"
             style="font-size:clamp(72px,12vw,160px)">
             BUILDING <span style="-webkit-text-stroke:1px #00ff88;color:transparent">GAMES</span><br />
             &amp; SYSTEMS
         </h1>
-
-        <!-- Sub-title -->
         <p class="anim-fadeup-3 font-['Bebas_Neue'] text-[#6b6b8a] tracking-widest uppercase mb-10"
            style="font-size:clamp(24px,4vw,52px)">
             Unity · Godot · C# · C++
         </p>
-
-        <!-- Description -->
         <p class="anim-fadeup-4 max-w-xl text-[#6b6b8a] text-lg font-light leading-relaxed mb-12">
             Specializing in <strong class="text-white font-medium">Tools Engineering</strong> and modular
             systems architecture. 3+ years bridging technical complexity and creative vision.
         </p>
-
-        <!-- CTAs + stats -->
         <div class="anim-fadeup-5 flex flex-wrap gap-6 items-center">
             <a href="#contact"
                class="btn-primary relative overflow-hidden bg-[#00ff88] text-[#0a0a0f]
@@ -85,9 +67,7 @@
     </div>
 </section>
 
-<!-- ═══════════════════════════════════════════
-     MARQUEE
-════════════════════════════════════════════ -->
+<!-- MARQUEE -->
 <div class="overflow-hidden border-y border-white/5 py-4 bg-[#13131f]/50">
     <div class="marquee-track">
         @foreach (var item in MarqueeItems.Concat(MarqueeItems))
@@ -99,9 +79,7 @@
     </div>
 </div>
 
-<!-- ═══════════════════════════════════════════
-     PROJECTS
-════════════════════════════════════════════ -->
+<!-- PROJECTS -->
 <section id="projects" class="px-6 md:px-24 py-32">
     <div class="flex items-center gap-3 mb-4">
         <div class="h-px w-8 bg-[#00ff88]"></div>
@@ -112,45 +90,46 @@
         Active <span style="-webkit-text-stroke:1px #00ff88;color:transparent">Records</span>
     </h2>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-1">
-        @foreach (var project in PortfolioData.GetProjects())
-        {
-            <div class="project-card group relative bg-[#13131f] border border-white/5 p-8 transition-all hover:border-[#00ff88]/30">
-                <!-- Top border slide-in — driven by app.css .skill-card::before pattern reused here via group -->
-                <div class="absolute top-0 left-0 w-full h-px bg-[#00ff88] scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></div>
-
-                <div class="aspect-video mb-8 overflow-hidden bg-[#0a0a0f] border border-white/5">
-                    <img src="@project.ImageUrl"
-                        class="w-full h-full object-cover transition-all duration-700"
-                        onerror="this.src='https://placehold.co/600x400/13131f/6b6b8a?text=NO+IMAGE'" />
+    @if (_loading)
+    {
+        <div class="font-['Space_Mono'] text-[#00ff88] text-xs tracking-widest animate-pulse py-20 text-center">
+            LOADING_RECORDS...
+        </div>
+    }
+    else
+    {
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-1">
+            @foreach (var project in PortfolioData.GetProjects())
+            {
+                <div class="project-card group relative bg-[#13131f] border border-white/5 p-8 transition-all hover:border-[#00ff88]/30">
+                    <div class="absolute top-0 left-0 w-full h-px bg-[#00ff88] scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></div>
+                    <div class="aspect-video mb-8 overflow-hidden bg-[#0a0a0f] border border-white/5">
+                        <img src="@project.ImageUrl"
+                             class="w-full h-full object-cover transition-all duration-700"
+                             onerror="this.src='https://placehold.co/600x400/13131f/6b6b8a?text=NO+IMAGE'" />
+                    </div>
+                    <div class="font-['Space_Mono'] text-[10px] text-[#00ff88] uppercase tracking-widest mb-3">
+                        @project.Engine // @project.Category
+                    </div>
+                    <h3 class="font-['Bebas_Neue'] text-3xl mb-4 tracking-wider">@project.Title</h3>
+                    <p class="text-[#6b6b8a] text-sm leading-relaxed mb-8 font-light">@project.Description</p>
+                    <div class="flex gap-6">
+                        <a href="#" class="font-['Space_Mono'] text-[10px] uppercase text-[#6b6b8a] hover:text-white transition-colors">[ Source ]</a>
+                        <a href="#" class="font-['Space_Mono'] text-[10px] uppercase text-[#00ff88] hover:underline transition-colors">[ Execute ]</a>
+                    </div>
                 </div>
-
-                <div class="font-['Space_Mono'] text-[10px] text-[#00ff88] uppercase tracking-widest mb-3">
-                    @project.Engine // @project.Category
-                </div>
-                <h3 class="font-['Bebas_Neue'] text-3xl mb-4 tracking-wider">@project.Title</h3>
-                <p class="text-[#6b6b8a] text-sm leading-relaxed mb-8 font-light">@project.Description</p>
-
-                <div class="flex gap-6">
-                    <a href="#" class="font-['Space_Mono'] text-[10px] uppercase text-[#6b6b8a] hover:text-white transition-colors">[ Source ]</a>
-                    <a href="#" class="font-['Space_Mono'] text-[10px] uppercase text-[#00ff88] hover:underline transition-colors">[ Execute ]</a>
-                </div>
-            </div>
-        }
-    </div>
+            }
+        </div>
+    }
 </section>
 
-<!-- ═══════════════════════════════════════════
-     ABOUT
-════════════════════════════════════════════ -->
+<!-- ABOUT -->
 <section id="about" class="px-6 md:px-24 py-32 border-t border-white/5">
     <div class="flex items-center gap-3 mb-4">
         <div class="h-px w-8 bg-[#00ff88]"></div>
         <span class="font-['Space_Mono'] text-[#00ff88] text-[10px] tracking-[0.3em] uppercase">About</span>
     </div>
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-24 items-start">
-
-        <!-- Bio -->
         <div class="reveal">
             <h2 class="font-['Bebas_Neue'] mb-10" style="font-size:clamp(40px,6vw,80px)">
                 THE BUILDER<br />
@@ -174,8 +153,6 @@
                 }
             </div>
         </div>
-
-        <!-- Expertise bars -->
         <div class="reveal expertise-list" style="transition-delay:0.2s">
             <div class="flex items-center gap-3 mb-8">
                 <div class="h-px w-6 bg-[#00ff88]"></div>
@@ -197,9 +174,7 @@
     </div>
 </section>
 
-<!-- ═══════════════════════════════════════════
-     HIGHLIGHTS STRIP
-════════════════════════════════════════════ -->
+<!-- HIGHLIGHTS STRIP -->
 <div class="grid grid-cols-2 md:grid-cols-4 gap-px reveal">
     @foreach (var h in Highlights)
     {
@@ -213,17 +188,13 @@
     }
 </div>
 
-<!-- ═══════════════════════════════════════════
-     EXPERIENCE
-════════════════════════════════════════════ -->
+<!-- EXPERIENCE -->
 <section id="experience" class="px-6 md:px-24 py-32 border-t border-white/5">
     <div class="flex items-center gap-3 mb-4">
         <div class="h-px w-8 bg-[#00ff88]"></div>
         <span class="font-['Space_Mono'] text-[#00ff88] text-[10px] tracking-[0.3em] uppercase">Career</span>
     </div>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-16 md:gap-20 items-start">
-
-        <!-- Timeline -->
         <div>
             <h2 class="reveal font-['Bebas_Neue'] leading-none mb-14" style="font-size:clamp(40px,6vw,80px)">
                 Work<br />History
@@ -250,8 +221,6 @@
                 }
             </div>
         </div>
-
-        <!-- Deliverables -->
         <div>
             <h2 class="reveal font-['Bebas_Neue'] leading-none mb-14"
                 style="font-size:clamp(40px,6vw,80px);transition-delay:0.2s">
@@ -273,9 +242,7 @@
     </div>
 </section>
 
-<!-- ═══════════════════════════════════════════
-     CONTACT
-════════════════════════════════════════════ -->
+<!-- CONTACT -->
 <section id="contact"
          class="contact-section relative overflow-hidden text-center
                 bg-[#13131f] border-y border-white/[0.07] px-6 py-40">
@@ -289,31 +256,25 @@
         <a href="mailto:hello@example.com"
            class="font-['Space_Mono'] text-xs border border-white/10 px-10 py-5 uppercase
                   hover:border-[#00ff88] hover:text-[#00ff88] hover:shadow-[0_0_30px_rgba(0,255,136,0.12)]
-                  hover:-translate-y-0.5 transition-all tracking-widest">
-            ✉ Email Me
-        </a>
+                  hover:-translate-y-0.5 transition-all tracking-widest">✉ Email Me</a>
         <a href="https://linkedin.com" target="_blank"
            class="font-['Space_Mono'] text-xs border border-white/10 px-10 py-5 uppercase
                   hover:border-[#00ff88] hover:text-[#00ff88] hover:shadow-[0_0_30px_rgba(0,255,136,0.12)]
-                  hover:-translate-y-0.5 transition-all tracking-widest">
-            in LinkedIn
-        </a>
+                  hover:-translate-y-0.5 transition-all tracking-widest">in LinkedIn</a>
         <a href="https://github.com" target="_blank"
            class="font-['Space_Mono'] text-xs border border-white/10 px-10 py-5 uppercase
                   hover:border-[#00ff88] hover:text-[#00ff88] hover:shadow-[0_0_30px_rgba(0,255,136,0.12)]
-                  hover:-translate-y-0.5 transition-all tracking-widest">
-            ⌥ GitHub
-        </a>
+                  hover:-translate-y-0.5 transition-all tracking-widest">⌥ GitHub</a>
         <a href="#"
            class="font-['Space_Mono'] text-xs border border-white/10 px-10 py-5 uppercase
                   hover:border-[#00ff88] hover:text-[#00ff88] hover:shadow-[0_0_30px_rgba(0,255,136,0.12)]
-                  hover:-translate-y-0.5 transition-all tracking-widest">
-            ↓ Resume PDF
-        </a>
+                  hover:-translate-y-0.5 transition-all tracking-widest">↓ Resume PDF</a>
     </div>
 </section>
 
 @code {
+    private bool _loading = true;
+
     private record ExpertiseBar(string Name, int Pct);
     private record HighlightStat(string Number, string Suffix, string Label);
     private record JobItem(string Date, string Company, string Role, string Desc, string[] Tags);
@@ -363,7 +324,13 @@
             "End-to-end game deployment with App Store Optimization for organic acquisition growth."),
     ];
 
-    // ── Called by JS interop after render ──────────────────────
+    // ── Load persisted projects before first render ─────────────
+    protected override async Task OnInitializedAsync()
+    {
+        await PortfolioData.EnsureLoadedAsync();
+        _loading = false;
+    }
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)

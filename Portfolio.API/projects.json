@@ -1,0 +1,15 @@
+[
+  {
+    "Id": "0cc21551-cf75-431f-aa59-8b754cb2687f",
+    "Title": "aDad",
+    "Engine": "adAD",
+    "Description": "",
+    "Category": "Game Systems",
+    "GithubUrl": "",
+    "ImageUrl": "http://localhost:5087/uploads/01e39ab7-92aa-43d2-aca5-d995c8388e96.jpg",
+    "GameUrl": "",
+    "TechStack": "",
+    "DesignPatterns": [],
+    "Features": []
+  }
+]
