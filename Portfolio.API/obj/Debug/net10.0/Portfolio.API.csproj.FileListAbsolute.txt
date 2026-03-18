@@ -34,3 +34,4 @@ D:\Personal\Projects\MyPortfolio\Portfolio.API\obj\Debug\net10.0\Portfolio.API.p
 D:\Personal\Projects\MyPortfolio\Portfolio.API\obj\Debug\net10.0\Portfolio.API.genruntimeconfig.cache
 D:\Personal\Projects\MyPortfolio\Portfolio.API\obj\Debug\net10.0\ref\Portfolio.API.dll
 D:\Personal\Projects\MyPortfolio\Portfolio.API\bin\Debug\net10.0\projects.json
+D:\Personal\Projects\MyPortfolio\Portfolio.API\bin\Debug\net10.0\site-content.json

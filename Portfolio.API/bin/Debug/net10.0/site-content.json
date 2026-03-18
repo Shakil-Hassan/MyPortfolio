@@ -1,0 +1,159 @@
+{
+  "HeroStatus": "Available for Remote Work",
+  "HeroEyebrow": "Game Developer \u0026 Tools Engineer",
+  "HeroHeadline1": "BUILDING",
+  "HeroHeadline2": "GAMES",
+  "HeroHeadline3": "\u0026 SYSTEMS",
+  "HeroSubtitle": "Unity \u00B7 Godot \u00B7 C# \u00B7 C\u002B\u002B",
+  "HeroDescription": "Specializing in Tools Engineering and modular systems architecture.",
+  "HeroCtaPrimary": "Initialize Contact",
+  "HeroCtaSecondary": "View Experience \u2192",
+  "HeroStats": [
+    {
+      "Value": "5\u002B",
+      "Label": "Years Exp"
+    },
+    {
+      "Value": "20\u002B",
+      "Label": "Tech Interviews"
+    },
+    {
+      "Value": "2",
+      "Label": "Engines"
+    }
+  ],
+  "MarqueeItems": [
+    "Unity 3D",
+    "Godot Engine",
+    "C Sharp",
+    "GDScript",
+    "Level Editor",
+    "DOTween",
+    "Firebase",
+    "Play Store ASO",
+    "Git \u0026 SourceTree",
+    "LevelPlay SDK"
+  ],
+  "AboutHeadline": "THE BUILDER",
+  "AboutSubheadline": "BEHIND THE BUILD",
+  "AboutParagraphs": [
+    "My biggest strength is Tooling. I\u0027ve developed custom Dynamic Level Editors that allow designers to iterate without dev intervention.",
+    "I\u0027m deeply familiar with the full game lifecycle: from physics prototypes to Play Store publishing and ASO optimization."
+  ],
+  "AboutTags": [
+    "Unity",
+    "Godot",
+    "C#",
+    "C\u002B\u002B",
+    "GDScript",
+    "Editor Scripting"
+  ],
+  "ExpertiseBars": [
+    {
+      "Name": "Tooling \u0026 Editor Scripting",
+      "Pct": 96
+    },
+    {
+      "Name": "Unity / C#",
+      "Pct": 94
+    },
+    {
+      "Name": "Godot / GDScript",
+      "Pct": 88
+    },
+    {
+      "Name": "Systems Architecture",
+      "Pct": 90
+    },
+    {
+      "Name": "Analytics \u0026 SDK Integration",
+      "Pct": 82
+    },
+    {
+      "Name": "Git / Version Control",
+      "Pct": 92
+    }
+  ],
+  "Highlights": [
+    {
+      "Number": "3",
+      "Suffix": "\u002B",
+      "Label": "Years of Game Dev Experience"
+    },
+    {
+      "Number": "20",
+      "Suffix": "\u002B",
+      "Label": "Technical Interviews Conducted"
+    },
+    {
+      "Number": "100",
+      "Suffix": "%",
+      "Label": "Remote-Ready Workflow"
+    },
+    {
+      "Number": "\u221E",
+      "Suffix": "",
+      "Label": "Passion for Process Optimization"
+    }
+  ],
+  "Jobs": [
+    {
+      "Date": "2022 \u2014 Present",
+      "Company": "SnackPlay Studio",
+      "Role": "Game Developer",
+      "Desc": "Built custom Dynamic Level Editors enabling designers to iterate independently.",
+      "Tags": [
+        "Unity",
+        "C#",
+        "Editor Scripting",
+        "DOTween"
+      ]
+    },
+    {
+      "Date": "2021 \u2014 2022",
+      "Company": "Indie / Contract",
+      "Role": "Game Developer",
+      "Desc": "Developed full-cycle mobile games from physics prototyping through Play Store publishing.",
+      "Tags": [
+        "Godot",
+        "GDScript",
+        "Firebase",
+        "ASO"
+      ]
+    },
+    {
+      "Date": "2021",
+      "Company": "Early Career",
+      "Role": "Junior Developer",
+      "Desc": "Established foundations in game systems architecture and version control.",
+      "Tags": [
+        "C\u002B\u002B",
+        "Git",
+        "SourceTree"
+      ]
+    }
+  ],
+  "Deliverables": [
+    {
+      "Label": "01 \u2014 Level Editor",
+      "Title": "Dynamic Level Editor System",
+      "Desc": "Custom Unity tooling enabling non-dev designers to build and publish levels."
+    },
+    {
+      "Label": "02 \u2014 Analytics",
+      "Title": "Data Pipeline Integration",
+      "Desc": "Full integration of LevelPlay, Firebase, and ByteBrew."
+    },
+    {
+      "Label": "03 \u2014 Publishing",
+      "Title": "Play Store Publishing \u0026 ASO",
+      "Desc": "End-to-end game deployment with App Store Optimization."
+    }
+  ],
+  "ContactTitle": "LET\u0027S BUILD TOGETHER",
+  "ContactSub": "Currently seeking remote opportunities where I can optimize production pipelines.",
+  "ContactEmail": "hello@example.com",
+  "ContactLinkedIn": "https://linkedin.com",
+  "ContactGithub": "https://github.com",
+  "ContactResume": "#"
+}
