@@ -224,6 +224,46 @@
                                 }
                             </div>
 
+                            <div class="border border-white/10 p-4 bg-[#0a0a0f]">
+                                <div class="admin-label mb-4 flex items-center gap-2 cursor-pointer" @onclick='() => _showAdditionalDetails = !_showAdditionalDetails'>
+                                    <span>@(_showAdditionalDetails ? "▾" : "▸")</span>
+                                    <span>Additional Details (Optional)</span>
+                                </div>
+                                @if (_showAdditionalDetails)
+                                {
+                                    <div class="flex flex-col gap-3 pt-2">
+                                        <div class="flex flex-col">
+                                            <label class="admin-label">Related Projects (one per line)</label>
+                                            <textarea class="admin-input" rows="3" @bind="_relatedProjectsText"></textarea>
+                                        </div>
+                                        <div class="flex flex-col">
+                                            <label class="admin-label">Technical Challenges (one per line)</label>
+                                            <textarea class="admin-input" rows="3" @bind="_technicalChallengesText"></textarea>
+                                        </div>
+                                        <div class="flex flex-col">
+                                            <label class="admin-label">Tools & Pipeline (one per line)</label>
+                                            <textarea class="admin-input" rows="3" @bind="_toolsUsedText"></textarea>
+                                        </div>
+                                        <div class="flex flex-col">
+                                            <label class="admin-label">Team Composition (one per line)</label>
+                                            <textarea class="admin-input" rows="3" @bind="_teamCompositionText"></textarea>
+                                        </div>
+                                        <div class="flex flex-col">
+                                            <label class="admin-label">Awards (one per line)</label>
+                                            <textarea class="admin-input" rows="3" @bind="_awardsText"></textarea>
+                                        </div>
+                                        <div class="flex flex-col">
+                                            <label class="admin-label">Version Highlights (one per line)</label>
+                                            <textarea class="admin-input" rows="3" @bind="_versionHighlightsText"></textarea>
+                                        </div>
+                                        <div class="flex flex-col">
+                                            <label class="admin-label">Accessibility Features (one per line)</label>
+                                            <textarea class="admin-input" rows="3" @bind="_accessibilityFeaturesText"></textarea>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+
                             <div class="flex gap-3 pt-2">
                                 <button type="submit" class="btn-admin-green flex-1">@(isEditing ? "Update" : "Add")</button>
                                 @if (isEditing)
@@ -738,6 +778,14 @@
     private string  _patternsText    = string.Empty;
     private string  _platformsText   = string.Empty;
     private bool    _showShippedStats = false;
+    private bool    _showAdditionalDetails = false;
+    private string  _relatedProjectsText     = string.Empty;
+    private string  _technicalChallengesText = string.Empty;
+    private string  _toolsUsedText           = string.Empty;
+    private string  _teamCompositionText     = string.Empty;
+    private string  _awardsText              = string.Empty;
+    private string  _versionHighlightsText   = string.Empty;
+    private string  _accessibilityFeaturesText = string.Empty;
     private Dictionary<int, string> _teamRolesText = new();
     private Dictionary<int, string> _teamToolsText = new();
 
@@ -810,6 +858,20 @@
             .Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).ToList();
         newProject.ShippedMetrics.Platforms = _platformsText
             .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).ToList();
+        newProject.RelatedProjects = _relatedProjectsText
+            .Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).ToList();
+        newProject.TechnicalChallenges = _technicalChallengesText
+            .Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).ToList();
+        newProject.ToolsUsed = _toolsUsedText
+            .Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).ToList();
+        newProject.TeamComposition = _teamCompositionText
+            .Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).ToList();
+        newProject.Awards = _awardsText
+            .Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).ToList();
+        newProject.VersionHighlights = _versionHighlightsText
+            .Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).ToList();
+        newProject.AccessibilityFeatures = _accessibilityFeaturesText
+            .Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).ToList();
         if (isEditing)
         {
             if (!string.IsNullOrEmpty(originalImageUrl) && newProject.ImageUrl != originalImageUrl)
@@ -834,14 +896,27 @@
                 IsShipped=p.ShippedMetrics.IsShipped, Downloads=p.ShippedMetrics.Downloads,
                 Rating=p.ShippedMetrics.Rating, ReviewCount=p.ShippedMetrics.ReviewCount,
                 CategoryRank=p.ShippedMetrics.CategoryRank, DailyActiveUsers=p.ShippedMetrics.DailyActiveUsers,
-                Retention7Day=p.ShippedMetrics.Retention7Day, Platforms=new(p.ShippedMetrics.Platforms) }
+                Retention7Day=p.ShippedMetrics.Retention7Day, Platforms=new(p.ShippedMetrics.Platforms) },
+            RelatedProjects=new(p.RelatedProjects), TechnicalChallenges=new(p.TechnicalChallenges),
+            ToolsUsed=new(p.ToolsUsed), TeamComposition=new(p.TeamComposition),
+            Awards=new(p.Awards), VersionHighlights=new(p.VersionHighlights),
+            AccessibilityFeatures=new(p.AccessibilityFeatures)
         };
         originalImageUrl = p.ImageUrl;
         originalVideoUrl = p.VideoUrl;
         _featuresText    = string.Join("\n", p.Features);
         _patternsText    = string.Join("\n", p.DesignPatterns);
         _platformsText   = string.Join(", ", p.ShippedMetrics.Platforms);
+        _relatedProjectsText     = string.Join("\n", p.RelatedProjects);
+        _technicalChallengesText = string.Join("\n", p.TechnicalChallenges);
+        _toolsUsedText           = string.Join("\n", p.ToolsUsed);
+        _teamCompositionText     = string.Join("\n", p.TeamComposition);
+        _awardsText              = string.Join("\n", p.Awards);
+        _versionHighlightsText   = string.Join("\n", p.VersionHighlights);
+        _accessibilityFeaturesText = string.Join("\n", p.AccessibilityFeatures);
         _showShippedStats = p.ShippedMetrics.IsShipped || p.ShippedMetrics.Downloads > 0;
+        _showAdditionalDetails = p.RelatedProjects.Any() || p.TechnicalChallenges.Any() || p.ToolsUsed.Any() ||
+                                 p.TeamComposition.Any() || p.Awards.Any() || p.VersionHighlights.Any() || p.AccessibilityFeatures.Any();
         isEditing = true;
     }
 
@@ -858,7 +933,12 @@
     {
         newProject = new(); originalImageUrl = string.Empty; originalVideoUrl = string.Empty;
         _featuresText = string.Empty; _patternsText = string.Empty; _platformsText = string.Empty;
-        _showShippedStats = false; isEditing = false;
+        _showShippedStats = false; _showAdditionalDetails = false;
+        _relatedProjectsText = string.Empty; _technicalChallengesText = string.Empty;
+        _toolsUsedText = string.Empty; _teamCompositionText = string.Empty;
+        _awardsText = string.Empty; _versionHighlightsText = string.Empty;
+        _accessibilityFeaturesText = string.Empty;
+        isEditing = false;
     }
 
     private async Task SaveTeamContent()

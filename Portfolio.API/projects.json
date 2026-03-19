@@ -1,33 +1,5 @@
 [
   {
-    "Id": "4e19f4ea-bd4b-44a8-aee3-12917451bb49",
-    "Title": "sdfsadfds",
-    "Engine": "fsdfsad",
-    "Description": "",
-    "Category": "Game Systems",
-    "YourRole": "",
-    "GithubUrl": "",
-    "ImageUrl": "http://localhost:5087/uploads/6efd9fa5-77d6-43b4-9f58-1d9b7ccbbac6.jpg",
-    "VideoUrl": "",
-    "UseVideoThumbnail": false,
-    "GameplayVideoUrl": "",
-    "GameUrl": "",
-    "TechStack": "",
-    "DesignPatterns": [],
-    "Features": [],
-    "ScreenshotUrls": [],
-    "ShippedMetrics": {
-      "IsShipped": false,
-      "Downloads": 0,
-      "Rating": 0,
-      "ReviewCount": 0,
-      "CategoryRank": "",
-      "DailyActiveUsers": 0,
-      "Retention7Day": 0,
-      "Platforms": []
-    }
-  },
-  {
     "Id": "0be6ddd5-d5fc-449c-bd1f-4a3aaead7800",
     "Title": "cxsd",
     "Engine": "vdfds",
@@ -57,7 +29,14 @@
       "DailyActiveUsers": 0,
       "Retention7Day": 0,
       "Platforms": []
-    }
+    },
+    "RelatedProjects": [],
+    "TechnicalChallenges": [],
+    "ToolsUsed": [],
+    "TeamComposition": [],
+    "Awards": [],
+    "VersionHighlights": [],
+    "AccessibilityFeatures": []
   },
   {
     "Id": "5f0edb8e-4fb9-4228-a8f1-bc29badd7015",
@@ -89,7 +68,14 @@
       "DailyActiveUsers": 0,
       "Retention7Day": 0,
       "Platforms": []
-    }
+    },
+    "RelatedProjects": [],
+    "TechnicalChallenges": [],
+    "ToolsUsed": [],
+    "TeamComposition": [],
+    "Awards": [],
+    "VersionHighlights": [],
+    "AccessibilityFeatures": []
   },
   {
     "Id": "e5891f6f-f46d-4cc2-9d55-5a684a3617b0",
@@ -121,6 +107,60 @@
       "DailyActiveUsers": 0,
       "Retention7Day": 0,
       "Platforms": []
-    }
+    },
+    "RelatedProjects": [],
+    "TechnicalChallenges": [],
+    "ToolsUsed": [],
+    "TeamComposition": [],
+    "Awards": [],
+    "VersionHighlights": [],
+    "AccessibilityFeatures": []
+  },
+  {
+    "Id": "4e19f4ea-bd4b-44a8-aee3-12917451bb49",
+    "Title": "sdfsadfds",
+    "Engine": "fsdfsad",
+    "Description": "asedad",
+    "Category": "Game Systems",
+    "YourRole": "",
+    "GithubUrl": "",
+    "ImageUrl": "http://localhost:5087/uploads/6efd9fa5-77d6-43b4-9f58-1d9b7ccbbac6.jpg",
+    "VideoUrl": "http://localhost:5087/uploads/49f0917f-6d9d-494c-9f6a-d18e12548f9a.mp4",
+    "UseVideoThumbnail": true,
+    "GameplayVideoUrl": "",
+    "GameUrl": "",
+    "TechStack": "",
+    "DesignPatterns": [
+      "sac"
+    ],
+    "Features": [
+      "sacxas"
+    ],
+    "ScreenshotUrls": [
+      "http://localhost:5087/uploads/c90a6f06-705f-4432-b503-a032248ddef2.png",
+      "http://localhost:5087/uploads/21ed2ab3-b3bc-4354-8a48-d6836d3326f5.png",
+      "http://localhost:5087/uploads/2e5e9b73-033e-418f-aaff-941baa9fccac.png",
+      "http://localhost:5087/uploads/f72b8fef-d8ac-4811-9c06-07f58f13b00f.png",
+      "http://localhost:5087/uploads/88f12d0a-2e6e-4188-b5ae-171bb246f0ac.png",
+      "http://localhost:5087/uploads/0a334293-6dac-4827-a00d-2ac24da64ac9.png",
+      "http://localhost:5087/uploads/0bbdb692-ede9-4da2-a5d5-d842b6c6d7c5.png"
+    ],
+    "ShippedMetrics": {
+      "IsShipped": false,
+      "Downloads": 0,
+      "Rating": 0,
+      "ReviewCount": 0,
+      "CategoryRank": "",
+      "DailyActiveUsers": 0,
+      "Retention7Day": 0,
+      "Platforms": []
+    },
+    "RelatedProjects": [],
+    "TechnicalChallenges": [],
+    "ToolsUsed": [],
+    "TeamComposition": [],
+    "Awards": [],
+    "VersionHighlights": [],
+    "AccessibilityFeatures": []
   }
 ]

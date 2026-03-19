@@ -118,6 +118,13 @@ public class ProjectData
     public List<string> Features       { get; set; } = new();
     public List<string> ScreenshotUrls { get; set; } = new();
     public ShippedStatsData ShippedMetrics { get; set; } = new();
+    public List<string> RelatedProjects     { get; set; } = new();
+    public List<string> TechnicalChallenges { get; set; } = new();
+    public List<string> ToolsUsed           { get; set; } = new();
+    public List<string> TeamComposition     { get; set; } = new();
+    public List<string> Awards              { get; set; } = new();
+    public List<string> VersionHighlights   { get; set; } = new();
+    public List<string> AccessibilityFeatures { get; set; } = new();
 }
 
 public class SiteContentData

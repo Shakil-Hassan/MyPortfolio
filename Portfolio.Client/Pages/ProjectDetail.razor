@@ -261,8 +261,146 @@ else
                         </div>
                     </div>
                 }
-                @if (_project.Features.Any())
+
+                <!-- Related Projects -->
+                @if (_project.RelatedProjects.Any())
                 {
+                    <div class="reveal">
+                        <div class="flex items-center gap-3 mb-8">
+                            <div class="h-px w-6 bg-[#00ff88]"></div>
+                            <span class="font-['Space_Mono'] text-[#00ff88] text-[10px] tracking-[0.3em] uppercase">Related Projects</span>
+                        </div>
+                        <div class="flex flex-wrap gap-3">
+                            @foreach (var related in _project.RelatedProjects)
+                            {
+                                <div class="bg-[#13131f] border border-[#00ff88]/20 px-5 py-3 hover:border-[#00ff88]/50 transition-all">
+                                    <span class="font-['Space_Mono'] text-[11px] tracking-widest uppercase text-[#00ff88]">@related</span>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+
+                <!-- Technical Challenges -->
+                @if (_project.TechnicalChallenges.Any())
+                {
+                    <div class="reveal">
+                        <div class="flex items-center gap-3 mb-8">
+                            <div class="h-px w-6 bg-[#00ff88]"></div>
+                            <span class="font-['Space_Mono'] text-[#00ff88] text-[10px] tracking-[0.3em] uppercase">Technical Challenges</span>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            @foreach (var challenge in _project.TechnicalChallenges)
+                            {
+                                <div class="flex items-start gap-3 bg-[#13131f] border border-white/5 p-5 hover:border-[#00ff88]/20 transition-all">
+                                    <span class="text-[#00ff88] font-['Space_Mono'] text-xs mt-0.5 flex-shrink-0">⚠</span>
+                                    <span class="text-[#6b6b8a] text-sm font-light leading-relaxed">@challenge</span>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+
+                <!-- Tools & Pipeline -->
+                @if (_project.ToolsUsed.Any())
+                {
+                    <div class="reveal">
+                        <div class="flex items-center gap-3 mb-8">
+                            <div class="h-px w-6 bg-[#00ff88]"></div>
+                            <span class="font-['Space_Mono'] text-[#00ff88] text-[10px] tracking-[0.3em] uppercase">Tools & Pipeline</span>
+                        </div>
+                        <div class="flex flex-wrap gap-3">
+                            @foreach (var tool in _project.ToolsUsed)
+                            {
+                                <div class="bg-[#13131f] border border-[#7c3aed]/20 px-5 py-3 hover:border-[#7c3aed]/50 transition-all">
+                                    <span class="font-['Space_Mono'] text-[11px] tracking-widest uppercase text-[#7c3aed]">@tool</span>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+
+                <!-- Team Composition -->
+                @if (_project.TeamComposition.Any())
+                {
+                    <div class="reveal">
+                        <div class="flex items-center gap-3 mb-8">
+                            <div class="h-px w-6 bg-[#00ff88]"></div>
+                            <span class="font-['Space_Mono'] text-[#00ff88] text-[10px] tracking-[0.3em] uppercase">Team Composition</span>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            @foreach (var member in _project.TeamComposition)
+                            {
+                                <div class="flex items-start gap-3 bg-[#13131f] border border-white/5 p-5 hover:border-[#00ff88]/20 transition-all">
+                                    <span class="text-[#00ff88] font-['Space_Mono'] text-xs mt-0.5 flex-shrink-0">👤</span>
+                                    <span class="text-[#6b6b8a] text-sm font-light leading-relaxed">@member</span>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+
+                <!-- Awards -->
+                @if (_project.Awards.Any())
+                {
+                    <div class="reveal">
+                        <div class="flex items-center gap-3 mb-8">
+                            <div class="h-px w-6 bg-[#00ff88]"></div>
+                            <span class="font-['Space_Mono'] text-[#00ff88] text-[10px] tracking-[0.3em] uppercase">Awards & Recognition</span>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            @foreach (var award in _project.Awards)
+                            {
+                                <div class="flex items-start gap-3 bg-[#13131f] border border-[#ffd700]/20 p-5 hover:border-[#ffd700]/50 transition-all">
+                                    <span class="text-[#ffd700] font-['Space_Mono'] text-xs mt-0.5 flex-shrink-0">🏆</span>
+                                    <span class="text-[#6b6b8a] text-sm font-light leading-relaxed">@award</span>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+
+                <!-- Version Highlights -->
+                @if (_project.VersionHighlights.Any())
+                {
+                    <div class="reveal">
+                        <div class="flex items-center gap-3 mb-8">
+                            <div class="h-px w-6 bg-[#00ff88]"></div>
+                            <span class="font-['Space_Mono'] text-[#00ff88] text-[10px] tracking-[0.3em] uppercase">Version Highlights</span>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            @foreach (var highlight in _project.VersionHighlights)
+                            {
+                                <div class="flex items-start gap-3 bg-[#13131f] border border-white/5 p-5 hover:border-[#00ff88]/20 transition-all">
+                                    <span class="text-[#00ff88] font-['Space_Mono'] text-xs mt-0.5 flex-shrink-0">✨</span>
+                                    <span class="text-[#6b6b8a] text-sm font-light leading-relaxed">@highlight</span>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+
+                <!-- Accessibility Features -->
+                @if (_project.AccessibilityFeatures.Any())
+                {
+                    <div class="reveal">
+                        <div class="flex items-center gap-3 mb-8">
+                            <div class="h-px w-6 bg-[#00ff88]"></div>
+                            <span class="font-['Space_Mono'] text-[#00ff88] text-[10px] tracking-[0.3em] uppercase">Accessibility Features</span>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            @foreach (var feature in _project.AccessibilityFeatures)
+                            {
+                                <div class="flex items-start gap-3 bg-[#13131f] border border-[#00ff88]/20 p-5 hover:border-[#00ff88]/50 transition-all">
+                                    <span class="text-[#00ff88] font-['Space_Mono'] text-xs mt-0.5 flex-shrink-0">♿</span>
+                                    <span class="text-[#6b6b8a] text-sm font-light leading-relaxed">@feature</span>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+
+                <!-- Features -->
                     <div class="reveal">
                         <div class="flex items-center gap-3 mb-8">
                             <div class="h-px w-6 bg-[#00ff88]"></div>
