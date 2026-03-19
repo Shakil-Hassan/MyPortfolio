@@ -15,6 +15,7 @@ public class Project
     public string ImageUrl          { get; set; } = string.Empty;
     public string VideoUrl          { get; set; } = string.Empty;
     public bool   UseVideoThumbnail { get; set; } = false;
+    public string GameplayVideoUrl  { get; set; } = string.Empty;
     public string GameUrl           { get; set; } = string.Empty;
     public List<string> DesignPatterns { get; set; } = new();
     public List<string> Features       { get; set; } = new();
@@ -79,6 +80,15 @@ public class SiteContent
     public string ContactLinkedIn { get; set; } = "https://linkedin.com";
     public string ContactGithub   { get; set; } = "https://github.com";
     public string ContactResume   { get; set; } = "#";
+    public List<PublishedGame>    PublishedGames { get; set; } = new() {
+        new() { Title="Endless Runner", Platforms=new(){"iOS","Android"}, AppStoreUrl="https://apps.apple.com", PlayStoreUrl="https://play.google.com", Engine="Unity" },
+        new() { Title="Puzzle Master", Platforms=new(){"iOS","Android"}, AppStoreUrl="https://apps.apple.com", PlayStoreUrl="https://play.google.com", Engine="Unity" } };
+    public List<EngineBreakdown>  EngineStats    { get; set; } = new() {
+        new() { Engine="Unity", ProjectCount=12, Description="Primary engine for mobile & console games" },
+        new() { Engine="Godot", ProjectCount=5, Description="Cross-platform indie projects" } };
+    public List<TeamExperience>   TeamExperiences { get; set; } = new() {
+        new() { Period="2022 — Present", Studio="Game Studio", TeamSize=8, Roles=new(){"Gameplay","Tools","Architecture"}, CollaborationTools=new(){"Git","Perforce","Jira"} },
+        new() { Period="2021 — 2022", Studio="Indie / Contract", TeamSize=1, Roles=new(){"Full-Stack"}, CollaborationTools=new(){"Git","GitHub","Trello"} } };
 }
 
 // ── VALUE TYPES ───────────────────────────────────────────────────────────────
@@ -116,4 +126,31 @@ public class DeliverableItem
     public string Label { get; set; } = "";
     public string Title { get; set; } = "";
     public string Desc  { get; set; } = "";
+}
+
+public class PublishedGame
+{
+    public string Title          { get; set; } = "";
+    public string Engine         { get; set; } = "Unity";
+    public List<string> Platforms { get; set; } = new();
+    public string AppStoreUrl    { get; set; } = "";
+    public string PlayStoreUrl   { get; set; } = "";
+    public string ItchIoUrl      { get; set; } = "";
+    public string SteamUrl       { get; set; } = "";
+}
+
+public class EngineBreakdown
+{
+    public string Engine       { get; set; } = "";
+    public int    ProjectCount { get; set; } = 0;
+    public string Description  { get; set; } = "";
+}
+
+public class TeamExperience
+{
+    public string Period              { get; set; } = "";
+    public string Studio              { get; set; } = "";
+    public int TeamSize              { get; set; } = 1;
+    public List<string> Roles         { get; set; } = new();
+    public List<string> CollaborationTools { get; set; } = new();
 }

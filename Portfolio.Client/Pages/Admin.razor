@@ -187,6 +187,152 @@
             </div>
         }
 
+        <!-- ── PUBLISHED GAMES ── -->
+        @if (_activeSection == "published")
+        {
+            <div class="mb-8">
+                <h2 class="font-['Bebas_Neue'] text-5xl tracking-wide">Published Games</h2>
+                <p class="font-['Space_Mono'] text-[10px] text-[#6b6b8a] uppercase tracking-widest mt-1">Add shipped titles with store links</p>
+            </div>
+
+            <div class="bg-[#13131f] border border-white/5 p-8 max-w-2xl">
+                <div class="admin-section-label mb-6">Published Games</div>
+                @for (int i = 0; i < _c.PublishedGames.Count; i++)
+                {
+                    var idx = i;
+                    <div class="border border-white/10 p-5 mb-4">
+                        <div class="flex gap-3 items-end mb-3">
+                            <div class="flex flex-col flex-1">
+                                <label class="admin-label">Title</label>
+                                <InputText @bind-Value="_c.PublishedGames[idx].Title" class="admin-input" />
+                            </div>
+                            <div class="flex flex-col flex-1">
+                                <label class="admin-label">Engine</label>
+                                <InputText @bind-Value="_c.PublishedGames[idx].Engine" class="admin-input" placeholder="Unity" />
+                            </div>
+                            <button @onclick="() => _c.PublishedGames.RemoveAt(idx)" class="btn-admin-red px-3 py-2 self-end">✕</button>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3 mb-3">
+                            <div class="flex flex-col">
+                                <label class="admin-label">App Store URL</label>
+                                <InputText @bind-Value="_c.PublishedGames[idx].AppStoreUrl" class="admin-input" placeholder="https://apps.apple.com/..." />
+                            </div>
+                            <div class="flex flex-col">
+                                <label class="admin-label">Play Store URL</label>
+                                <InputText @bind-Value="_c.PublishedGames[idx].PlayStoreUrl" class="admin-input" placeholder="https://play.google.com/..." />
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="flex flex-col">
+                                <label class="admin-label">itch.io URL</label>
+                                <InputText @bind-Value="_c.PublishedGames[idx].ItchIoUrl" class="admin-input" placeholder="https://itch.io/..." />
+                            </div>
+                            <div class="flex flex-col">
+                                <label class="admin-label">Steam URL</label>
+                                <InputText @bind-Value="_c.PublishedGames[idx].SteamUrl" class="admin-input" placeholder="https://store.steampowered.com/..." />
+                            </div>
+                        </div>
+                    </div>
+                }
+                <button @onclick="() => _c.PublishedGames.Add(new PublishedGame())" class="btn-admin-ghost text-xs">+ Add Game</button>
+            </div>
+
+            <div class="mt-10 pt-6 border-t border-white/5 flex items-center gap-4">
+                <button @onclick="SaveContent" class="btn-admin-green">Save Changes</button>
+                <span class="font-['Space_Mono'] text-[10px] text-[#6b6b8a] uppercase tracking-widest">Saved to server JSON</span>
+            </div>
+        }
+
+        <!-- ── ENGINE BREAKDOWN ── -->
+        @if (_activeSection == "engines")
+        {
+            <div class="mb-8">
+                <h2 class="font-['Bebas_Neue'] text-5xl tracking-wide">Engine Stats</h2>
+                <p class="font-['Space_Mono'] text-[10px] text-[#6b6b8a] uppercase tracking-widest mt-1">Show expertise by engine</p>
+            </div>
+
+            <div class="bg-[#13131f] border border-white/5 p-8 max-w-2xl">
+                <div class="admin-section-label mb-6">Engines</div>
+                @for (int i = 0; i < _c.EngineStats.Count; i++)
+                {
+                    var idx = i;
+                    <div class="border border-white/10 p-5 mb-4">
+                        <div class="flex gap-3 items-end mb-3">
+                            <div class="flex flex-col flex-1">
+                                <label class="admin-label">Engine</label>
+                                <InputText @bind-Value="_c.EngineStats[idx].Engine" class="admin-input" placeholder="Unity" />
+                            </div>
+                            <div class="flex flex-col flex-1">
+                                <label class="admin-label">Project Count</label>
+                                <InputNumber @bind-Value="_c.EngineStats[idx].ProjectCount" class="admin-input" />
+                            </div>
+                            <button @onclick="() => _c.EngineStats.RemoveAt(idx)" class="btn-admin-red px-3 py-2 self-end">✕</button>
+                        </div>
+                        <div class="flex flex-col">
+                            <label class="admin-label">Description</label>
+                            <InputText @bind-Value="_c.EngineStats[idx].Description" class="admin-input" />
+                        </div>
+                    </div>
+                }
+                <button @onclick="() => _c.EngineStats.Add(new EngineBreakdown())" class="btn-admin-ghost text-xs">+ Add Engine</button>
+            </div>
+
+            <div class="mt-10 pt-6 border-t border-white/5 flex items-center gap-4">
+                <button @onclick="SaveContent" class="btn-admin-green">Save Changes</button>
+                <span class="font-['Space_Mono'] text-[10px] text-[#6b6b8a] uppercase tracking-widest">Saved to server JSON</span>
+            </div>
+        }
+
+        <!-- ── TEAM EXPERIENCE ── -->
+        @if (_activeSection == "team")
+        {
+            <div class="mb-8">
+                <h2 class="font-['Bebas_Neue'] text-5xl tracking-wide">Team Experience</h2>
+                <p class="font-['Space_Mono'] text-[10px] text-[#6b6b8a] uppercase tracking-widest mt-1">Document your team & collaboration experience</p>
+            </div>
+
+            <div class="bg-[#13131f] border border-white/5 p-8 max-w-3xl">
+                <div class="admin-section-label mb-6">Studio Experience</div>
+                @for (int i = 0; i < _c.TeamExperiences.Count; i++)
+                {
+                    var idx = i;
+                    <div class="border border-white/10 p-5 mb-4">
+                        <div class="grid grid-cols-3 gap-3 mb-3">
+                            <div class="flex flex-col">
+                                <label class="admin-label">Period</label>
+                                <InputText @bind-Value="_c.TeamExperiences[idx].Period" class="admin-input" placeholder="2022 — Present" />
+                            </div>
+                            <div class="flex flex-col">
+                                <label class="admin-label">Studio</label>
+                                <InputText @bind-Value="_c.TeamExperiences[idx].Studio" class="admin-input" placeholder="Game Studio" />
+                            </div>
+                            <div class="flex flex-col">
+                                <label class="admin-label">Team Size</label>
+                                <InputNumber @bind-Value="_c.TeamExperiences[idx].TeamSize" class="admin-input" />
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="admin-label">Your Roles (one per line)</label>
+                            <textarea class="admin-input" rows="2" @bind="@_teamRolesText[idx]"></textarea>
+                        </div>
+                        <div class="flex gap-3 items-start">
+                            <div class="flex flex-col flex-1">
+                                <label class="admin-label">Collaboration Tools (one per line)</label>
+                                <textarea class="admin-input" rows="2" @bind="@_teamToolsText[idx]"></textarea>
+                            </div>
+                            <button @onclick="() => RemoveTeamExperience(idx)" class="btn-admin-red px-3 py-2 self-start mt-8">✕</button>
+                        </div>
+                    </div>
+                }
+                <button @onclick="() => _c.TeamExperiences.Add(new TeamExperience())" class="btn-admin-ghost text-xs">+ Add Experience</button>
+            </div>
+
+            <div class="mt-10 pt-6 border-t border-white/5 flex items-center gap-4">
+                <button @onclick="SaveTeamContent" class="btn-admin-green">Save Changes</button>
+                <span class="font-['Space_Mono'] text-[10px] text-[#6b6b8a] uppercase tracking-widest">Saved to server JSON</span>
+            </div>
+        }
+
         <!-- ── HERO ── -->
         @if (_activeSection == "hero")
         {
@@ -247,8 +393,7 @@
                 <div class="admin-section-label mb-6">Items</div>
                 @for (int i = 0; i < _c.MarqueeItems.Count; i++)
                 {
-                    var idx = i;
-                    <div class="flex gap-3 mb-3">
+                    var idx = i;                    <div class="flex gap-3 mb-3">
                         <input class="admin-input flex-1" @bind="_c.MarqueeItems[idx]" />
                         <button @onclick="() => _c.MarqueeItems.RemoveAt(idx)" class="btn-admin-red px-3">✕</button>
                     </div>
@@ -500,13 +645,16 @@
 
     private static readonly Dictionary<string, string> _sections = new()
     {
-        ["projects"]   = "01  Projects",
-        ["hero"]       = "02  Hero",
-        ["marquee"]    = "03  Marquee",
-        ["about"]      = "04  About",
-        ["highlights"] = "05  Highlights",
-        ["experience"] = "06  Experience",
-        ["contact"]    = "07  Contact",
+        ["projects"]      = "01  Projects",
+        ["published"]     = "02  Published Games",
+        ["engines"]       = "03  Engine Stats",
+        ["team"]          = "04  Team Experience",
+        ["hero"]          = "05  Hero",
+        ["marquee"]       = "06  Marquee",
+        ["about"]         = "07  About",
+        ["highlights"]    = "08  Highlights",
+        ["experience"]    = "09  Experience",
+        ["contact"]       = "10  Contact",
     };
 
     private Project newProject       = new();
@@ -516,12 +664,21 @@
     private string  originalVideoUrl = string.Empty;
     private string  _featuresText    = string.Empty;
     private string  _patternsText    = string.Empty;
+    private Dictionary<int, string> _teamRolesText = new();
+    private Dictionary<int, string> _teamToolsText = new();
 
     protected override async Task OnInitializedAsync()
     {
         await PortfolioData.EnsureLoadedAsync();
         var json = System.Text.Json.JsonSerializer.Serialize(PortfolioData.GetContent());
         _c = System.Text.Json.JsonSerializer.Deserialize<SiteContent>(json) ?? new();
+        
+        // Initialize team experience text fields
+        for (int i = 0; i < _c.TeamExperiences.Count; i++)
+        {
+            _teamRolesText[i] = string.Join("\n", _c.TeamExperiences[i].Roles);
+            _teamToolsText[i] = string.Join("\n", _c.TeamExperiences[i].CollaborationTools);
+        }
     }
 
     private async Task SaveContent()
@@ -604,5 +761,29 @@
     {
         newProject = new(); originalImageUrl = string.Empty; originalVideoUrl = string.Empty;
         _featuresText = string.Empty; _patternsText = string.Empty; isEditing = false;
+    }
+
+    private async Task SaveTeamContent()
+    {
+        // Parse team experience text back to lists
+        for (int i = 0; i < _c.TeamExperiences.Count; i++)
+        {
+            if (_teamRolesText.ContainsKey(i))
+                _c.TeamExperiences[i].Roles = _teamRolesText[i]
+                    .Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).ToList();
+            
+            if (_teamToolsText.ContainsKey(i))
+                _c.TeamExperiences[i].CollaborationTools = _teamToolsText[i]
+                    .Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).ToList();
+        }
+        
+        await SaveContent();
+    }
+
+    private void RemoveTeamExperience(int idx)
+    {
+        _c.TeamExperiences.RemoveAt(idx);
+        _teamRolesText.Remove(idx);
+        _teamToolsText.Remove(idx);
     }
 }
