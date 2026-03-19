@@ -155,5 +155,82 @@
   "ContactEmail": "hello@example.com",
   "ContactLinkedIn": "https://linkedin.com",
   "ContactGithub": "https://github.com",
-  "ContactResume": "#"
+  "ContactResume": "#",
+  "PublishedGames": [
+    {
+      "Title": "Endless Runner 2",
+      "Engine": "Unreal;",
+      "Platforms": [
+        "iOS",
+        "Android"
+      ],
+      "AppStoreUrl": "https://apps.apple.com",
+      "PlayStoreUrl": "https://play.google.com",
+      "ItchIoUrl": "",
+      "SteamUrl": ""
+    },
+    {
+      "Title": "Puzzle Master",
+      "Engine": "Unity",
+      "Platforms": [
+        "iOS",
+        "Android"
+      ],
+      "AppStoreUrl": "https://apps.apple.com",
+      "PlayStoreUrl": "https://play.google.com",
+      "ItchIoUrl": "",
+      "SteamUrl": ""
+    },
+    {
+      "Title": "Zombie FIght",
+      "Engine": "Unity",
+      "Platforms": [],
+      "AppStoreUrl": "",
+      "PlayStoreUrl": "",
+      "ItchIoUrl": "",
+      "SteamUrl": ""
+    }
+  ],
+  "EngineStats": [
+    {
+      "Engine": "Unity",
+      "ProjectCount": 12,
+      "Description": "Primary engine for mobile \u0026 console games"
+    },
+    {
+      "Engine": "Godot",
+      "ProjectCount": 5,
+      "Description": "Cross-platform indie projects"
+    }
+  ],
+  "TeamExperiences": [
+    {
+      "Period": "2022 \u2014 Present",
+      "Studio": "Game Studio",
+      "TeamSize": 8,
+      "Roles": [
+        "Gameplay",
+        "Tools",
+        "Architecture"
+      ],
+      "CollaborationTools": [
+        "Git",
+        "Perforce",
+        "Jira"
+      ]
+    },
+    {
+      "Period": "2021 \u2014 2022",
+      "Studio": "Indie / Contract",
+      "TeamSize": 1,
+      "Roles": [
+        "Full-Stack"
+      ],
+      "CollaborationTools": [
+        "Git",
+        "GitHub",
+        "Trello"
+      ]
+    }
+  ]
 }
