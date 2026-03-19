@@ -102,9 +102,18 @@
                 <div class="project-card group relative bg-[#13131f] border border-white/5 p-8 transition-all hover:border-[#00ff88]/30">
                     <div class="absolute top-0 left-0 w-full h-px bg-[#00ff88] scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></div>
                     <div class="aspect-video mb-8 overflow-hidden bg-[#0a0a0f] border border-white/5">
-                        <img src="@project.ImageUrl"
-                             class="w-full h-full object-cover transition-all duration-700"
-                             onerror="this.src='https://placehold.co/600x400/13131f/6b6b8a?text=NO+IMAGE'" />
+                        @if (!string.IsNullOrEmpty(project.VideoUrl) && project.UseVideoThumbnail)
+                        {
+                            <video src="@project.VideoUrl" autoplay muted loop playsinline
+                                   class="w-full h-full object-cover transition-all duration-700"
+                                   onerror="this.poster='https://placehold.co/600x400/13131f/6b6b8a?text=NO+VIDEO'" />
+                        }
+                        else
+                        {
+                            <img src="@project.ImageUrl"
+                                 class="w-full h-full object-cover transition-all duration-700"
+                                 onerror="this.src='https://placehold.co/600x400/13131f/6b6b8a?text=NO+IMAGE'" />
+                        }
                     </div>
                     <div class="font-['Space_Mono'] text-[10px] text-[#00ff88] uppercase tracking-widest mb-3">
                         @project.Engine // @project.Category

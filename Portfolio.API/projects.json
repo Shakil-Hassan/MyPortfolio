@@ -7,6 +7,8 @@
     "Category": "Game Systems",
     "GithubUrl": "",
     "ImageUrl": "http://localhost:5087/uploads/acdb1411-e6e3-4e1d-a206-64bf19e05dae.jpg",
+    "VideoUrl": "",
+    "UseVideoThumbnail": false,
     "GameUrl": "",
     "TechStack": "",
     "DesignPatterns": [],
@@ -20,6 +22,8 @@
     "Category": "Game Systems",
     "GithubUrl": "",
     "ImageUrl": "http://localhost:5087/uploads/6efd9fa5-77d6-43b4-9f58-1d9b7ccbbac6.jpg",
+    "VideoUrl": "",
+    "UseVideoThumbnail": false,
     "GameUrl": "",
     "TechStack": "",
     "DesignPatterns": [],
@@ -33,6 +37,8 @@
     "Category": "Game Systems",
     "GithubUrl": "dsvsdv",
     "ImageUrl": "http://localhost:5087/uploads/23da7884-4715-435c-8e75-27ca538feb22.jpeg",
+    "VideoUrl": "",
+    "UseVideoThumbnail": false,
     "GameUrl": "dvsdvdsv",
     "TechStack": "asfasfas, sdfsdgsd, asfaf",
     "DesignPatterns": [
@@ -50,6 +56,8 @@
     "Category": "Game Systems",
     "GithubUrl": "",
     "ImageUrl": "http://localhost:5087/uploads/cd8efb96-b92d-4596-beae-1d96a7a56ea6.jpeg",
+    "VideoUrl": "",
+    "UseVideoThumbnail": false,
     "GameUrl": "",
     "TechStack": "ascfascfasdcsa",
     "DesignPatterns": [
@@ -57,6 +65,25 @@
     ],
     "Features": [
       "asfcascfsafcas"
+    ]
+  },
+  {
+    "Id": "e5891f6f-f46d-4cc2-9d55-5a684a3617b0",
+    "Title": "New Project",
+    "Engine": "Unity",
+    "Description": "No Description",
+    "Category": "Game Systems",
+    "GithubUrl": "",
+    "ImageUrl": "http://localhost:5087/uploads/67aa4185-af5d-4fa7-a7f9-a745c14fff62.png",
+    "VideoUrl": "http://localhost:5087/uploads/fd933cfb-bd5b-4695-844b-e6152a93c164.mp4",
+    "UseVideoThumbnail": true,
+    "GameUrl": "",
+    "TechStack": "C#, Unity",
+    "DesignPatterns": [
+      "Singleton"
+    ],
+    "Features": [
+      "No Feature"
     ]
   }
 ]

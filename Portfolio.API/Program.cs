@@ -1,6 +1,13 @@
 using System.Text.Json;
+using Microsoft.AspNetCore.Http.Features;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.Configure<FormOptions>(options =>
+{
+    // Allow larger uploads (e.g. video files)
+    options.MultipartBodyLengthLimit = 1024L * 1024 * 200; // 200 MB
+});
 
 builder.Services.AddCors(options => {
     options.AddDefaultPolicy(policy =>
@@ -100,9 +107,11 @@ public class ProjectData
     public string Description { get; set; } = string.Empty;
     public string Category    { get; set; } = "Game Systems";
     public string GithubUrl   { get; set; } = string.Empty;
-    public string ImageUrl    { get; set; } = string.Empty;
-    public string GameUrl     { get; set; } = string.Empty;
-    public string TechStack   { get; set; } = string.Empty;
+    public string ImageUrl           { get; set; } = string.Empty;
+    public string VideoUrl           { get; set; } = string.Empty;
+    public bool   UseVideoThumbnail  { get; set; } = false;
+    public string GameUrl            { get; set; } = string.Empty;
+    public string TechStack          { get; set; } = string.Empty;
     public List<string> DesignPatterns { get; set; } = new();
     public List<string> Features       { get; set; } = new();
 }

@@ -15,7 +15,9 @@ public class WasmFileUploadService : IFileUploadService
     public async Task<string> UploadFileAsync(IBrowserFile file)
     {
         using var content = new MultipartFormDataContent();
-        var fileContent = new StreamContent(file.OpenReadStream(maxAllowedSize: 1024 * 1024 * 10));
+        // Allow reasonably large uploads (e.g. short gameplay clips)
+        const long maxUploadSize = 1024L * 1024 * 100; // 100 MB
+        var fileContent = new StreamContent(file.OpenReadStream(maxAllowedSize: maxUploadSize));
         fileContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(file.ContentType);
         
         content.Add(fileContent, "file", file.Name);
