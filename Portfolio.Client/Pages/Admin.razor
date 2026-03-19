@@ -91,6 +91,11 @@
                                 </div>
                             </div>
 
+                            <div class="flex flex-col">
+                                <label class="admin-label">Your Role</label>
+                                <InputText @bind-Value="newProject.YourRole" class="admin-input" placeholder="Lead Programmer" />
+                            </div>
+
                             <div>
                                 <label class="admin-label">Image</label>
                                 <div class="relative border border-white/10 p-5 bg-[#0a0a0f] hover:border-[#00ff88]/30 transition-colors">
@@ -127,6 +132,29 @@
                                 </InputRadioGroup>
                             </div>
 
+                            <div>
+                                <label class="admin-label">Screenshots (multiple)</label>
+                                <div class="relative border border-white/10 p-5 bg-[#0a0a0f] hover:border-[#00ff88]/30 transition-colors">
+                                    <InputFile OnChange="HandleScreenshotsSelected" multiple="multiple" class="absolute inset-0 opacity-0 cursor-pointer z-10" accept=".png,.jpg,.jpeg" />
+                                    <span class="text-[10px] text-[#6b6b8a] uppercase tracking-widest block text-center">
+                                        @(isUploading ? "Uploading..." : newProject.ScreenshotUrls.Count == 0 ? "Drop Screenshots" : $"✓ {newProject.ScreenshotUrls.Count} Screenshots")
+                                    </span>
+                                </div>
+                                @if (newProject.ScreenshotUrls.Count > 0)
+                                {
+                                    <div class="mt-3 flex flex-col gap-2">
+                                        @foreach (var url in newProject.ScreenshotUrls)
+                                        {
+                                            var screenshot = url;
+                                            <div class="flex items-center justify-between text-[10px]">
+                                                <span class="text-[#6b6b8a] truncate">@screenshot</span>
+                                                <button type="button" @onclick="() => newProject.ScreenshotUrls.Remove(screenshot)" class="text-red-400 hover:text-red-300">✕</button>
+                                            </div>
+                                        }
+                                    </div>
+                                }
+                            </div>
+
                             <div class="flex flex-col">
                                 <label class="admin-label">Description</label>
                                 <InputTextArea @bind-Value="newProject.Description" rows="3" class="admin-input" />
@@ -150,6 +178,50 @@
                             <div class="flex flex-col">
                                 <label class="admin-label">Demo URL</label>
                                 <InputText @bind-Value="newProject.GameUrl" class="admin-input" placeholder="https://..." />
+                            </div>
+
+                            <div class="border border-white/10 p-4 bg-[#0a0a0f]">
+                                <div class="admin-label mb-4 flex items-center gap-2 cursor-pointer" @onclick='() => _showShippedStats = !_showShippedStats'>
+                                    <span>@(_showShippedStats ? "▾" : "▸")</span>
+                                    <span>Shipped Stats (Optional)</span>
+                                </div>
+                                @if (_showShippedStats)
+                                {
+                                    <div class="flex flex-col gap-3 pt-2">
+                                        <div class="flex items-center gap-2">
+                                            <InputCheckbox @bind-Value="newProject.ShippedMetrics.IsShipped" />
+                                            <label class="text-[10px] text-[#6b6b8a] uppercase">Shipped</label>
+                                        </div>
+                                        <div class="flex flex-col">
+                                            <label class="admin-label">Downloads</label>
+                                            <InputNumber @bind-Value="newProject.ShippedMetrics.Downloads" class="admin-input" />
+                                        </div>
+                                        <div class="flex flex-col">
+                                            <label class="admin-label">Rating (0.0-5.0)</label>
+                                            <InputNumber @bind-Value="newProject.ShippedMetrics.Rating" class="admin-input" step="0.1" />
+                                        </div>
+                                        <div class="flex flex-col">
+                                            <label class="admin-label">Review Count</label>
+                                            <InputNumber @bind-Value="newProject.ShippedMetrics.ReviewCount" class="admin-input" />
+                                        </div>
+                                        <div class="flex flex-col">
+                                            <label class="admin-label">Category Rank</label>
+                                            <InputText @bind-Value="newProject.ShippedMetrics.CategoryRank" class="admin-input" placeholder="#1 Arcade" />
+                                        </div>
+                                        <div class="flex flex-col">
+                                            <label class="admin-label">Daily Active Users</label>
+                                            <InputNumber @bind-Value="newProject.ShippedMetrics.DailyActiveUsers" class="admin-input" />
+                                        </div>
+                                        <div class="flex flex-col">
+                                            <label class="admin-label">7-Day Retention (%)</label>
+                                            <InputNumber @bind-Value="newProject.ShippedMetrics.Retention7Day" class="admin-input" />
+                                        </div>
+                                        <div class="flex flex-col">
+                                            <label class="admin-label">Platforms (comma sep)</label>
+                                            <textarea class="admin-input" rows="2" @bind="_platformsText"></textarea>
+                                        </div>
+                                    </div>
+                                }
                             </div>
 
                             <div class="flex gap-3 pt-2">
@@ -664,6 +736,8 @@
     private string  originalVideoUrl = string.Empty;
     private string  _featuresText    = string.Empty;
     private string  _patternsText    = string.Empty;
+    private string  _platformsText   = string.Empty;
+    private bool    _showShippedStats = false;
     private Dictionary<int, string> _teamRolesText = new();
     private Dictionary<int, string> _teamToolsText = new();
 
@@ -716,12 +790,26 @@
         isUploading = false;
     }
 
+    private async Task HandleScreenshotsSelected(InputFileChangeEventArgs e)
+    {
+        isUploading = true;
+        foreach (var file in e.GetMultipleFiles())
+        {
+            var url = await FileUploadService.UploadFileAsync(file);
+            if (!string.IsNullOrEmpty(url) && !newProject.ScreenshotUrls.Contains(url))
+                newProject.ScreenshotUrls.Add(url);
+        }
+        isUploading = false;
+    }
+
     private async Task HandleProjectSubmit()
     {
         newProject.Features = _featuresText
             .Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).ToList();
         newProject.DesignPatterns = _patternsText
             .Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).ToList();
+        newProject.ShippedMetrics.Platforms = _platformsText
+            .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).ToList();
         if (isEditing)
         {
             if (!string.IsNullOrEmpty(originalImageUrl) && newProject.ImageUrl != originalImageUrl)
@@ -738,13 +826,22 @@
     {
         newProject = new Project {
             Id=p.Id, Title=p.Title, Engine=p.Engine, Description=p.Description,
-            Category=p.Category, ImageUrl=p.ImageUrl, VideoUrl=p.VideoUrl, UseVideoThumbnail=p.UseVideoThumbnail,
+            Category=p.Category, YourRole=p.YourRole, ImageUrl=p.ImageUrl, VideoUrl=p.VideoUrl, UseVideoThumbnail=p.UseVideoThumbnail,
             TechStack=p.TechStack, GithubUrl=p.GithubUrl, GameUrl=p.GameUrl,
-            Features=new(p.Features), DesignPatterns=new(p.DesignPatterns) };
+            ScreenshotUrls=new(p.ScreenshotUrls),
+            Features=new(p.Features), DesignPatterns=new(p.DesignPatterns),
+            ShippedMetrics=new ShippedStats {
+                IsShipped=p.ShippedMetrics.IsShipped, Downloads=p.ShippedMetrics.Downloads,
+                Rating=p.ShippedMetrics.Rating, ReviewCount=p.ShippedMetrics.ReviewCount,
+                CategoryRank=p.ShippedMetrics.CategoryRank, DailyActiveUsers=p.ShippedMetrics.DailyActiveUsers,
+                Retention7Day=p.ShippedMetrics.Retention7Day, Platforms=new(p.ShippedMetrics.Platforms) }
+        };
         originalImageUrl = p.ImageUrl;
         originalVideoUrl = p.VideoUrl;
         _featuresText    = string.Join("\n", p.Features);
         _patternsText    = string.Join("\n", p.DesignPatterns);
+        _platformsText   = string.Join(", ", p.ShippedMetrics.Platforms);
+        _showShippedStats = p.ShippedMetrics.IsShipped || p.ShippedMetrics.Downloads > 0;
         isEditing = true;
     }
 
@@ -760,7 +857,8 @@
     private void ResetProjectForm()
     {
         newProject = new(); originalImageUrl = string.Empty; originalVideoUrl = string.Empty;
-        _featuresText = string.Empty; _patternsText = string.Empty; isEditing = false;
+        _featuresText = string.Empty; _patternsText = string.Empty; _platformsText = string.Empty;
+        _showShippedStats = false; isEditing = false;
     }
 
     private async Task SaveTeamContent()

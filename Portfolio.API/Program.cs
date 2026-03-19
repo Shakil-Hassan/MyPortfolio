@@ -106,6 +106,7 @@ public class ProjectData
     public string Engine      { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public string Category    { get; set; } = "Game Systems";
+    public string YourRole    { get; set; } = string.Empty;
     public string GithubUrl   { get; set; } = string.Empty;
     public string ImageUrl           { get; set; } = string.Empty;
     public string VideoUrl           { get; set; } = string.Empty;
@@ -115,6 +116,8 @@ public class ProjectData
     public string TechStack          { get; set; } = string.Empty;
     public List<string> DesignPatterns { get; set; } = new();
     public List<string> Features       { get; set; } = new();
+    public List<string> ScreenshotUrls { get; set; } = new();
+    public ShippedStatsData ShippedMetrics { get; set; } = new();
 }
 
 public class SiteContentData
@@ -189,3 +192,7 @@ public class PublishedGameData   { public string Title  { get; set; } = ""; publ
 public class EngineBreakdownData { public string Engine { get; set; } = ""; public int ProjectCount { get; set; } = 0; public string Description { get; set; } = ""; }
 public class TeamExperienceData  { public string Period { get; set; } = ""; public string Studio { get; set; } = ""; public int TeamSize { get; set; } = 1;
                                    public List<string> Roles { get; set; } = new(); public List<string> CollaborationTools { get; set; } = new(); }
+public class ShippedStatsData    { public bool   IsShipped      { get; set; } = false; public long   Downloads        { get; set; } = 0;
+                                   public double Rating          { get; set; } = 0.0; public int    ReviewCount     { get; set; } = 0;
+                                   public string CategoryRank    { get; set; } = ""; public int    DailyActiveUsers { get; set; } = 0;
+                                   public int    Retention7Day   { get; set; } = 0; public List<string> Platforms { get; set; } = new(); }

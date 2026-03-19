@@ -130,7 +130,137 @@ else
                     <p class="text-[#6b6b8a] leading-[1.9] text-lg font-light">@_project.Description</p>
                 </div>
 
-                <!-- Features -->
+                <!-- Your Role / Contribution -->
+                @if (!string.IsNullOrEmpty(_project.YourRole))
+                {
+                    <div class="reveal bg-[#13131f] border border-[#00ff88]/20 p-8">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="h-px w-6 bg-[#00ff88]"></div>
+                            <span class="font-['Space_Mono'] text-[#00ff88] text-[10px] tracking-[0.3em] uppercase">Your Role</span>
+                        </div>
+                        <div class="font-['Bebas_Neue'] text-2xl text-[#00ff88] mb-2">@_project.YourRole</div>
+                        <div class="text-[#6b6b8a] text-sm">Primary responsibility and contribution to this project</div>
+                    </div>
+                }
+
+                <!-- Screenshots Gallery -->
+                @if (_project.ScreenshotUrls.Any())
+                {
+                    <div class="reveal">
+                        <div class="flex items-center gap-3 mb-8">
+                            <div class="h-px w-6 bg-[#00ff88]"></div>
+                            <span class="font-['Space_Mono'] text-[#00ff88] text-[10px] tracking-[0.3em] uppercase">Screenshots</span>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            @foreach (var screenshot in _project.ScreenshotUrls)
+                            {
+                                <div class="overflow-hidden border border-white/5 bg-[#13131f] hover:border-[#00ff88]/20 transition-all cursor-pointer group"
+                                     @onclick="() => _selectedScreenshot = screenshot">
+                                    <img src="@screenshot"
+                                         class="w-full h-48 object-cover group-hover:scale-105 transition-transform"
+                                         onerror="this.src='https://placehold.co/600x300/13131f/6b6b8a?text=IMAGE'" />
+                                </div>
+                            }
+                        </div>
+                        @if (!string.IsNullOrEmpty(_selectedScreenshot))
+                        {
+                            <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 mt-8"
+                                 @onclick="() => _selectedScreenshot = string.Empty">
+                                <div class="relative max-w-4xl w-full" @onclick:stopPropagation="true">
+                                    <button @onclick="() => _selectedScreenshot = string.Empty"
+                                            class="absolute -top-12 right-0 text-[#6b6b8a] hover:text-[#00ff88] text-2xl">✕</button>
+                                    <img src="@_selectedScreenshot" class="w-full h-auto" />
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+
+                <!-- Shipped Metrics -->
+                @if (_project.ShippedMetrics.IsShipped)
+                {
+                    <div class="reveal">
+                        <div class="flex items-center gap-3 mb-8">
+                            <div class="h-px w-6 bg-[#00ff88]"></div>
+                            <span class="font-['Space_Mono'] text-[#00ff88] text-[10px] tracking-[0.3em] uppercase">Shipped Metrics</span>
+                        </div>
+                        <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                            @if (_project.ShippedMetrics.Downloads > 0)
+                            {
+                                <div class="bg-[#13131f] border border-white/5 p-5 hover:border-[#00ff88]/20 transition-all">
+                                    <div class="font-['Space_Mono'] text-[9px] text-[#6b6b8a] uppercase tracking-widest mb-2">Downloads</div>
+                                    <div class="font-['Bebas_Neue'] text-2xl text-[#00ff88]">
+                                        @if (_project.ShippedMetrics.Downloads >= 1000000)
+                                        {
+                                            @($"{(_project.ShippedMetrics.Downloads / 1000000.0):F1}M")
+                                        }
+                                        else if (_project.ShippedMetrics.Downloads >= 1000)
+                                        {
+                                            @($"{(_project.ShippedMetrics.Downloads / 1000.0):F1}K")
+                                        }
+                                        else
+                                        {
+                                            @_project.ShippedMetrics.Downloads
+                                        }
+                                    </div>
+                                </div>
+                            }
+                            @if (_project.ShippedMetrics.Rating > 0)
+                            {
+                                <div class="bg-[#13131f] border border-white/5 p-5 hover:border-[#00ff88]/20 transition-all">
+                                    <div class="font-['Space_Mono'] text-[9px] text-[#6b6b8a] uppercase tracking-widest mb-2">Rating</div>
+                                    <div class="font-['Bebas_Neue'] text-2xl text-[#00ff88]">@_project.ShippedMetrics.Rating.ToString("F1")</div>
+                                    @if (_project.ShippedMetrics.ReviewCount > 0)
+                                    {
+                                        <div class="font-['Space_Mono'] text-[10px] text-[#6b6b8a]">@_project.ShippedMetrics.ReviewCount reviews</div>
+                                    }
+                                </div>
+                            }
+                            @if (!string.IsNullOrEmpty(_project.ShippedMetrics.CategoryRank))
+                            {
+                                <div class="bg-[#13131f] border border-white/5 p-5 hover:border-[#00ff88]/20 transition-all">
+                                    <div class="font-['Space_Mono'] text-[9px] text-[#6b6b8a] uppercase tracking-widest mb-2">Rank</div>
+                                    <div class="font-['Bebas_Neue'] text-2xl text-[#00ff88]">@_project.ShippedMetrics.CategoryRank</div>
+                                </div>
+                            }
+                            @if (_project.ShippedMetrics.DailyActiveUsers > 0)
+                            {
+                                <div class="bg-[#13131f] border border-white/5 p-5 hover:border-[#00ff88]/20 transition-all">
+                                    <div class="font-['Space_Mono'] text-[9px] text-[#6b6b8a] uppercase tracking-widest mb-2">Daily Active</div>
+                                    <div class="font-['Bebas_Neue'] text-2xl text-[#00ff88]">
+                                        @if (_project.ShippedMetrics.DailyActiveUsers >= 1000)
+                                        {
+                                            @($"{(_project.ShippedMetrics.DailyActiveUsers / 1000.0):F1}K")
+                                        }
+                                        else
+                                        {
+                                            @_project.ShippedMetrics.DailyActiveUsers
+                                        }
+                                    </div>
+                                </div>
+                            }
+                            @if (_project.ShippedMetrics.Retention7Day > 0)
+                            {
+                                <div class="bg-[#13131f] border border-white/5 p-5 hover:border-[#00ff88]/20 transition-all">
+                                    <div class="font-['Space_Mono'] text-[9px] text-[#6b6b8a] uppercase tracking-widest mb-2">Retention D7</div>
+                                    <div class="font-['Bebas_Neue'] text-2xl text-[#00ff88]">@_project.ShippedMetrics.Retention7Day%</div>
+                                </div>
+                            }
+                            @if (_project.ShippedMetrics.Platforms.Any())
+                            {
+                                <div class="bg-[#13131f] border border-white/5 p-5 hover:border-[#00ff88]/20 transition-all col-span-2 md:col-span-1">
+                                    <div class="font-['Space_Mono'] text-[9px] text-[#6b6b8a] uppercase tracking-widest mb-2">Platforms</div>
+                                    <div class="flex flex-wrap gap-1">
+                                        @foreach (var platform in _project.ShippedMetrics.Platforms)
+                                        {
+                                            <span class="font-['Space_Mono'] text-[9px] bg-[#7c3aed]/10 border border-[#7c3aed]/20 px-2 py-1 text-[#7c3aed]">@platform</span>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
                 @if (_project.Features.Any())
                 {
                     <div class="reveal">
@@ -256,6 +386,7 @@ else
 
     private Project? _project;
     private bool _loading = true;
+    private string _selectedScreenshot = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
