@@ -1,33 +1,31 @@
 [
   {
-    "Id": "ad2fcf1e-94d6-4068-b209-3fad995b9396",
-    "Title": "sdvcsdvcfsd",
-    "Engine": "dscvsdv",
-    "Description": "",
-    "Category": "Game Systems",
-    "GithubUrl": "",
-    "ImageUrl": "http://localhost:5087/uploads/acdb1411-e6e3-4e1d-a206-64bf19e05dae.jpg",
-    "VideoUrl": "",
-    "UseVideoThumbnail": false,
-    "GameUrl": "",
-    "TechStack": "",
-    "DesignPatterns": [],
-    "Features": []
-  },
-  {
     "Id": "4e19f4ea-bd4b-44a8-aee3-12917451bb49",
     "Title": "sdfsadfds",
     "Engine": "fsdfsad",
     "Description": "",
     "Category": "Game Systems",
+    "YourRole": "",
     "GithubUrl": "",
     "ImageUrl": "http://localhost:5087/uploads/6efd9fa5-77d6-43b4-9f58-1d9b7ccbbac6.jpg",
     "VideoUrl": "",
     "UseVideoThumbnail": false,
+    "GameplayVideoUrl": "",
     "GameUrl": "",
     "TechStack": "",
     "DesignPatterns": [],
-    "Features": []
+    "Features": [],
+    "ScreenshotUrls": [],
+    "ShippedMetrics": {
+      "IsShipped": false,
+      "Downloads": 0,
+      "Rating": 0,
+      "ReviewCount": 0,
+      "CategoryRank": "",
+      "DailyActiveUsers": 0,
+      "Retention7Day": 0,
+      "Platforms": []
+    }
   },
   {
     "Id": "0be6ddd5-d5fc-449c-bd1f-4a3aaead7800",
@@ -35,10 +33,12 @@
     "Engine": "vdfds",
     "Description": "sddfvgdsfgrgerg sddfvgdsfgrgerg sddfvgdsfgrgerg sddfvgdsfgrgerg sddfvgdsfgrgerg sddfvgdsfgrgerg sddfvgdsfgrgerg sddfvgdsfgrgerg sddfvgdsfgrgerg sddfvgdsfgrgerg sddfvgdsfgrgerg sddfvgdsfgrgerg sddfvgdsfgrgerg sddfvgdsfgrgerg sddfvgdsfgrgerg sddfvgdsfgrgerg sddfvgdsfgrgerg sddfvgdsfgrgerg sddfvgdsfgrgerg sddfvgdsfgrgerg sddfvgdsfgrgerg sddfvgdsfgrgerg sddfvgdsfgrgerg sddfvgdsfgrgerg sddfvgdsfgrgerg sddfvgdsfgrgerg sddfvgdsfgrgerg sddfvgdsfgrgerg sddfvgdsfgrgerg sddfvgdsfgrgerg sddfvgdsfgrgerg sddfvgdsfgrgerg sddfvgdsfgrgerg sddfvgdsfgrgerg sddfvgdsfgrgerg sddfvgdsfgrgerg sddfvgdsfgrgerg sddfvgdsfgrgerg sddfvgdsfgrgerg sddfvgdsfgrgerg sddfvgdsfgrgerg sddfvgdsfgrgerg sddfvgdsfgrgerg sddfvgdsfgrgerg sddfvgdsfgrgerg sddfvgdsfgrgerg ",
     "Category": "Game Systems",
+    "YourRole": "",
     "GithubUrl": "dsvsdv",
     "ImageUrl": "http://localhost:5087/uploads/23da7884-4715-435c-8e75-27ca538feb22.jpeg",
     "VideoUrl": "",
     "UseVideoThumbnail": false,
+    "GameplayVideoUrl": "",
     "GameUrl": "dvsdvdsv",
     "TechStack": "asfasfas, sdfsdgsd, asfaf",
     "DesignPatterns": [
@@ -46,7 +46,18 @@
     ],
     "Features": [
       "sdcsdfsdfsdf"
-    ]
+    ],
+    "ScreenshotUrls": [],
+    "ShippedMetrics": {
+      "IsShipped": false,
+      "Downloads": 0,
+      "Rating": 0,
+      "ReviewCount": 0,
+      "CategoryRank": "",
+      "DailyActiveUsers": 0,
+      "Retention7Day": 0,
+      "Platforms": []
+    }
   },
   {
     "Id": "5f0edb8e-4fb9-4228-a8f1-bc29badd7015",
@@ -54,10 +65,12 @@
     "Engine": "dsvdsvcsd",
     "Description": "dsacfvasdfcascfas",
     "Category": "Game Systems",
+    "YourRole": "",
     "GithubUrl": "",
     "ImageUrl": "http://localhost:5087/uploads/cd8efb96-b92d-4596-beae-1d96a7a56ea6.jpeg",
     "VideoUrl": "",
     "UseVideoThumbnail": false,
+    "GameplayVideoUrl": "",
     "GameUrl": "",
     "TechStack": "ascfascfasdcsa",
     "DesignPatterns": [
@@ -65,7 +78,18 @@
     ],
     "Features": [
       "asfcascfsafcas"
-    ]
+    ],
+    "ScreenshotUrls": [],
+    "ShippedMetrics": {
+      "IsShipped": false,
+      "Downloads": 0,
+      "Rating": 0,
+      "ReviewCount": 0,
+      "CategoryRank": "",
+      "DailyActiveUsers": 0,
+      "Retention7Day": 0,
+      "Platforms": []
+    }
   },
   {
     "Id": "e5891f6f-f46d-4cc2-9d55-5a684a3617b0",
@@ -73,10 +97,12 @@
     "Engine": "Unity",
     "Description": "No Description",
     "Category": "Game Systems",
+    "YourRole": "",
     "GithubUrl": "",
     "ImageUrl": "http://localhost:5087/uploads/67aa4185-af5d-4fa7-a7f9-a745c14fff62.png",
     "VideoUrl": "http://localhost:5087/uploads/fd933cfb-bd5b-4695-844b-e6152a93c164.mp4",
     "UseVideoThumbnail": true,
+    "GameplayVideoUrl": "",
     "GameUrl": "",
     "TechStack": "C#, Unity",
     "DesignPatterns": [
@@ -84,6 +110,17 @@
     ],
     "Features": [
       "No Feature"
-    ]
+    ],
+    "ScreenshotUrls": [],
+    "ShippedMetrics": {
+      "IsShipped": false,
+      "Downloads": 0,
+      "Rating": 0,
+      "ReviewCount": 0,
+      "CategoryRank": "",
+      "DailyActiveUsers": 0,
+      "Retention7Day": 0,
+      "Platforms": []
+    }
   }
 ]
