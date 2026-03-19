@@ -1,0 +1,10 @@
+{
+  "json.schemas": [
+    {
+      "fileMatch": ["**/.mcp/server.json"],
+      "url": "https://static.modelcontextprotocol.io/schemas/2025-10-17/server.schema.json",
+      "name": "MCP Server Configuration"
+    }
+  ],
+  "json.schemaValidation": "warning"
+}
